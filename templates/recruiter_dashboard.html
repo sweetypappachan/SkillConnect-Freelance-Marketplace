@@ -1,0 +1,9 @@
+<h2>Recruiter Dashboard</h2>
+
+<p>Welcome {{ request.user.first_name }}!</p>
+
+<p><strong>Company:</strong> {{ profile.company_name }}</p>
+<p><strong>Job Title:</strong> {{ profile.job_title }}</p>
+<p><strong>Salary:</strong> {{ profile.salary }}</p>
+
+<a href="{% url 'logout' %}">Logout</a>

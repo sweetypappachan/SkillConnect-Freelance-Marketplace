@@ -1,0 +1,357 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SkillConnect</title>
+
+<style>
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:'Segoe UI', sans-serif;
+}
+
+body{
+    background:#e7e3db;
+}
+
+/* ================= HERO SECTION ================= */
+
+.hero{
+    position:relative;
+    height:100vh;
+    min-height:750px;
+    background:url("{% static 'images/login.jpg' %}") center/cover no-repeat;
+    display:flex;
+    align-items:center;
+    padding:0 8%;
+    color:white;
+}
+
+/* Dark left gradient like image */
+.hero::after{
+    content:"";
+    position:absolute;
+    inset:0;
+    background:linear-gradient(to right, rgba(0,0,0,0.85) 45%, rgba(0,0,0,0.3));
+}
+
+.navbar{
+    position:absolute;
+    top:0;
+    left:0;
+    width:100%;
+    padding:35px 8%;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    z-index:2;
+}
+
+.navbar h2{
+    color:white;
+    font-weight:600;
+    font-size:22px;
+}
+
+.nav-links a{
+    color:white;
+    text-decoration:none;
+    margin-left:35px;
+    font-weight:500;
+    font-size:15px;
+}
+
+.hero-content{
+    position:relative;
+    z-index:2;
+    max-width:700px;
+}
+
+.hero-content h1{
+    font-size:75px;
+    font-weight:700;
+    margin-bottom:25px;
+    line-height:1.05;
+}
+
+.hero-content p{
+    color:#ddd;
+    font-size:18px;
+    margin-bottom:35px;
+    line-height:1.6;
+}
+
+.hero-content a{
+    display:inline-block;
+    padding:16px 40px;
+    background:#8fae74;
+    border-radius:40px;
+    text-decoration:none;
+    color:white;
+    font-weight:600;
+    font-size:16px;
+}
+
+/* ================= WHITE OVERLAY SECTION ================= */
+
+.main-section{
+    width:88%;
+    margin:-120px auto 0 auto;   /* Overlap hero */
+    background:white;
+    border-radius:40px;
+    padding:80px 70px;
+    box-shadow:0 40px 80px rgba(0,0,0,0.15);
+    position:relative;
+    z-index:3;
+}
+
+/* SERVICES */
+
+.services{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:50px;
+    margin-bottom:80px;
+}
+
+.service-light{
+    background:#f5f5f5;
+    padding:50px;
+    border-radius:30px;
+}
+
+.service-dark{
+    background:#111;
+    color:white;
+    padding:50px;
+    border-radius:30px;
+}
+
+.service-light h2,
+.service-dark h2{
+    font-size:28px;
+    margin-bottom:25px;
+}
+
+.service-light ul{
+    list-style:none;
+}
+
+.service-light li{
+    margin-bottom:15px;
+    color:#555;
+    font-size:16px;
+}
+
+.service-dark p{
+    color:#ccc;
+    margin-bottom:25px;
+    line-height:1.6;
+}
+
+.service-dark button{
+    padding:14px 35px;
+    border:none;
+    border-radius:30px;
+    background:#8fae74;
+    color:white;
+    font-weight:600;
+    cursor:pointer;
+}
+
+/* TEAM SECTION */
+
+.team-title{
+    font-size:42px;
+    margin-bottom:40px;
+}
+
+.team-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
+    gap:30px;
+}
+
+.team-card{
+    background:#f5f5f5;
+    border-radius:25px;
+    overflow:hidden;
+    transition:0.3s;
+}
+
+.team-card:hover{
+    transform:translateY(-6px);
+}
+
+.team-card img{
+    width:100%;
+    height:220px;
+    object-fit:cover;
+}
+
+.team-card div{
+    padding:20px;
+}
+
+.team-card h4{
+    margin-bottom:10px;
+    font-size:18px;
+}
+
+.team-card p{
+    font-size:14px;
+    color:#555;
+}
+
+/* ================= FOOTER ================= */
+
+.footer{
+    background:#0f0f0f;
+    color:#aaa;
+    padding:90px 8%;
+    margin-top:100px;
+}
+
+.footer-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+    gap:50px;
+}
+
+.footer h4{
+    color:white;
+    margin-bottom:20px;
+    font-size:18px;
+}
+
+.footer p{
+    margin-bottom:10px;
+    font-size:14px;
+}
+</style>
+</head>
+<body>
+
+<!-- HERO -->
+<section class="hero">
+
+    <div class="navbar">
+        <h2>SkillConnect</h2>
+        <div class="nav-links">
+            <a href="{% url 'home' %}">Home</a>
+            <a href="{% url 'login' %}">Login</a>
+            <a href="{% url 'signup' %}">Register</a>
+        </div>
+    </div>
+
+    <div class="hero-content">
+        <h1>Connect Talent<br>With Opportunity</h1>
+        <p>
+        SkillConnect is a smart platform that brings Freelancers and Recruiters 
+        together to build projects, grow businesses, and create real opportunities.
+        </p>
+        <a href="{% url 'signup' %}">Join Now</a>
+    </div>
+
+</section>
+
+<!-- WHITE SECTION -->
+<section class="main-section">
+
+    <div class="services">
+        <div class="service-light">
+            <h2>What We Offer</h2>
+            <ul>
+                <li>✔ Freelance Job Listings</li>
+                <li>✔ Recruiter Hiring Dashboard</li>
+                <li>✔ Secure Profile Setup</li>
+                <li>✔ Skill-Based Matching</li>
+                <li>✔ Resume & CV Upload</li>
+                <li>✔ Project Collaboration Tools</li>
+            </ul>
+        </div>
+
+        <div class="service-dark">
+            <h2>Find Work. Hire Talent. Build Success.</h2>
+            <p>
+            Whether you're a Freelancer looking for opportunities 
+            or a Recruiter searching for top talent — SkillConnect 
+            makes the connection simple and powerful.
+            </p>
+            <button onclick="location.href='{% url 'signup' %}'">
+            Start Today
+            </button>
+        </div>
+    </div>
+
+    <h2 class="team-title">Opportunities & Talent</h2>
+
+    <div class="team-grid">
+        <div class="team-card">
+            <img src="{% static 'images/login.jpg' %}">
+            <div>
+                <h4>Freelancers</h4>
+                <p>Find projects that match your skills and grow your career.</p>
+            </div>
+        </div>
+
+        <div class="team-card">
+            <img src="{% static 'images/login.jpg' %}">
+            <div>
+                <h4>Recruiters</h4>
+                <p>Post jobs and hire qualified professionals easily.</p>
+            </div>
+        </div>
+
+        <div class="team-card">
+            <img src="{% static 'images/login.jpg' %}">
+            <div>
+                <h4>Smart Matching</h4>
+                <p>Connect the right talent to the right opportunity.</p>
+            </div>
+        </div>
+
+        <div class="team-card">
+            <div>
+                <h4>Collaboration</h4>
+                <p>Build long-term professional relationships worldwide.</p>
+            </div>
+        </div>
+    </div>
+
+</section>
+
+<!-- FOOTER -->
+<footer class="footer">
+    <div class="footer-grid">
+        <div>
+            <h4>SkillConnect</h4>
+            <p>Connecting freelancers and recruiters worldwide.</p>
+        </div>
+        <div>
+            <h4>For Freelancers</h4>
+            <p>Create Profile</p>
+            <p>Upload CV</p>
+            <p>Find Projects</p>
+        </div>
+        <div>
+            <h4>For Recruiters</h4>
+            <p>Post Jobs</p>
+            <p>Find Talent</p>
+            <p>Manage Applicants</p>
+        </div>
+        <div>
+            <h4>Platform</h4>
+            <p>Secure Authentication</p>
+            <p>Profile Setup</p>
+            <p>Dashboard Access</p>
+        </div>
+    </div>
+</footer>
+
+</body>
+</html>

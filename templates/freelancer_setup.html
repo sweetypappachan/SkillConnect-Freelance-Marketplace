@@ -1,0 +1,9 @@
+<h2>Complete Freelancer Profile</h2>
+<form method="POST" enctype="multipart/form-data">
+    {% csrf_token %}
+    <input type="text" name="education" placeholder="Education"><br><br>
+    <textarea name="skills" placeholder="Skills"></textarea><br><br>
+    <input type="text" name="experience" placeholder="Experience"><br><br>
+    <input type="file" name="cv"><br><br>
+    <button type="submit">Save Profile</button>
+</form>
