@@ -16,7 +16,6 @@
             background: url("{% static 'images/login.jpg' %}") no-repeat center center/cover;
         }
 
-        /* Dark overlay */
         body::before{
             content:"";
             position:absolute;
@@ -120,7 +119,7 @@
         {% endfor %}
     {% endif %}
 
-    <form method="POST">
+    <form method="POST" action="{% url 'signup' %}">
         {% csrf_token %}
 
         <label>Account Type</label>
@@ -142,9 +141,6 @@
         <label>Email</label>
         <input type="email" name="email" required>
 
-        <label>Country</label>
-        <input type="text" name="country" required>
-
         <label>Password</label>
         <input type="password" name="password" required>
 
@@ -155,7 +151,7 @@
     </form>
 
     <div class="back-link">
-        Already have an account? <a href="/">Login</a>
+        Already have an account? <a href="{% url 'login' %}">Login</a>
     </div>
 
 </div>

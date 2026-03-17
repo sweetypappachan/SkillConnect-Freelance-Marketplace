@@ -1,10 +1,243 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<!-- Font Awesome Icons -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+<style>
+
+/* Page background */
+body{
+    background:#f4f6fb;
+}
+
+/* Main container */
+.dashboard-container{
+    width:90%;
+    margin:auto;
+    padding-top:30px;
+}
+
+/* Header */
+.dashboard-header{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:25px;
+}
+
+/* Title */
+.dashboard-header h2{
+    font-weight:600;
+}
+
+/* Search area */
+.search-form{
+    display:flex;
+    gap:10px;
+}
+
+.search-form input{
+    padding:10px;
+    border-radius:6px;
+    border:1px solid #ccc;
+    width:220px;
+}
+
+.search-form select{
+    padding:10px;
+    border-radius:6px;
+    border:1px solid #ccc;
+}
+
+.search-form button{
+    background:#2d89ef;
+    color:white;
+    border:none;
+    padding:10px 16px;
+    border-radius:6px;
+    cursor:pointer;
+}
+
+.search-form button:hover{
+    background:#1a66c9;
+}
+
+/* Job grid */
+.job-grid{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:20px;
+}
+
+/* Job card */
+.job-card{
+    background:white;
+    border-radius:10px;
+    padding:20px;
+    box-shadow:0 3px 8px rgba(0,0,0,0.05);
+    transition:0.2s;
+}
+
+.job-card:hover{
+    transform:translateY(-4px);
+}
+
+/* Job title */
+.job-title{
+    font-size:18px;
+    font-weight:600;
+    margin-bottom:8px;
+}
+
+/* Description */
+.job-desc{
+    font-size:14px;
+    color:#555;
+    margin-bottom:10px;
+}
+
+/* Info rows */
+.job-info{
+    font-size:14px;
+    margin:6px 0;
+    color:#444;
+}
+
+.job-info i{
+    color:#2d89ef;
+    margin-right:6px;
+}
+
+/* Interest button */
+.interest-btn{
+    margin-top:15px;
+    width:100%;
+    padding:10px;
+    border:none;
+    border-radius:6px;
+    background:#28a745;
+    color:white;
+    font-weight:500;
+    cursor:pointer;
+}
+
+.interest-btn:hover{
+    background:#1e7e34;
+}
+
+/* Pagination */
+.pagination{
+    margin-top:35px;
+    text-align:center;
+}
+
+.pagination a{
+    padding:8px 14px;
+    margin:5px;
+    background:white;
+    border:1px solid #ddd;
+    border-radius:5px;
+    text-decoration:none;
+}
+
+</style>
+
+
+<div class="dashboard-container">
+
+<!-- Header -->
+<div class="dashboard-header">
+
 <h2>Freelancer Dashboard</h2>
-<h3>Profile Completion: {{ profile.profile_completion }}%</h3>
 
-<p>Welcome {{ request.user.first_name }}!</p>
+<form method="GET" class="search-form">
 
-<p><strong>Skills:</strong> {{ profile.skills }}</p>
-<p><strong>Experience:</strong> {{ profile.experience }}</p>
-<p><strong>Education:</strong> {{ profile.education }}</p>
+<input type="text" name="search" placeholder="Search job">
 
-<a href="{% url 'logout' %}">Logout</a>
+<select name="sort">
+<option value="date">Sort by Date</option>
+<option value="pay">Sort by Pay</option>
+</select>
+
+<button type="submit">
+<i class="fa fa-search"></i>
+</button>
+
+</form>
+
+</div>
+
+
+<!-- Job Cards -->
+<div class="job-grid">
+
+{% for job in page_obj %}
+
+<div class="job-card">
+
+<div class="job-title">
+<i class="fa-solid fa-briefcase"></i> {{ job.title }}
+</div>
+
+<div class="job-desc">
+{{ job.description }}
+</div>
+
+<div class="job-info">
+<i class="fa-solid fa-money-bill"></i>
+Pay: ₹ {{ job.pay_per_hour }} / hour
+</div>
+
+<div class="job-info">
+<i class="fa-solid fa-code"></i>
+Skills: {{ job.skills_required }}
+</div>
+
+<div class="job-info">
+<i class="fa-solid fa-clock"></i>
+{{ job.created_at|date:"d M Y - h:i A" }}
+</div>
+
+<form action="{% url 'send_interest' job.id %}" method="POST">
+{% csrf_token %}
+
+<button class="interest-btn">
+<i class="fa-solid fa-paper-plane"></i>
+Send Interest
+</button>
+
+</form>
+
+</div>
+
+{% empty %}
+
+<p>No jobs available</p>
+
+{% endfor %}
+
+</div>
+
+
+<!-- Pagination -->
+<div class="pagination">
+
+{% if page_obj.has_previous %}
+<a href="?page=1">First</a>
+<a href="?page={{ page_obj.previous_page_number }}">Previous</a>
+{% endif %}
+
+Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
+
+{% if page_obj.has_next %}
+<a href="?page={{ page_obj.next_page_number }}">Next</a>
+{% endif %}
+
+</div>
+
+
+</div>
+
+{% endblock %}

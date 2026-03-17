@@ -1,0 +1,166 @@
+{% extends "base.html" %}
+{% load static %}
+{% block content %}
+
+<head>
+<title>Create Job - SkillConnect</title>
+
+<style>
+
+html, body{
+    height:100%;
+}
+
+body{
+    margin:0;
+    padding:0;
+    font-family: 'Segoe UI', sans-serif;
+    background: url("{% static 'images/login.jpg' %}") no-repeat center center;
+    background-size:cover;
+    background-attachment:fixed;
+    position: relative;
+    display:flex;
+    flex-direction:column;
+}
+
+/* navbar fix */
+.navbar{
+    position:relative;
+    z-index:10;
+}
+
+/* background overlay */
+body::before{
+    content:"";
+    position:absolute;
+    top:0;
+    left:0;
+    width:100%;
+    height:100%;
+    background:rgba(0,0,0,0.4);
+    backdrop-filter: blur(3px);
+    z-index:1;
+}
+
+/* main container */
+.container{
+    position:relative;
+    z-index:2;
+    flex:1;
+    min-height:calc(100vh - 120px); /* pushes footer down */
+    display:flex;
+    justify-content:center;
+    align-items:center;
+}
+
+/* glass panel */
+.right-panel{
+    width:420px;
+    padding:40px;
+    border-radius:20px;
+    background: rgba(255,255,255,0.15);
+    backdrop-filter: blur(15px);
+    box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+    color:white;
+}
+
+/* heading */
+.right-panel h2{
+    text-align:center;
+    margin-bottom:15px;
+    font-size:28px;
+}
+
+/* labels */
+label{
+    display:block;
+    margin-top:15px;
+    font-size:14px;
+}
+
+/* inputs */
+input, textarea, select{
+    width:100%;
+    padding:12px;
+    margin-top:5px;
+    border:none;
+    border-bottom:2px solid rgba(255,255,255,0.6);
+    background:transparent;
+    color:white;
+    font-size:15px;
+    outline:none;
+}
+
+textarea{
+    resize:none;
+    height:80px;
+}
+
+select option{
+    color:black;
+}
+
+/* button */
+button{
+    width:100%;
+    padding:12px;
+    margin-top:30px;
+    border:none;
+    border-radius:25px;
+    background: linear-gradient(90deg,#4facfe,#00f2fe);
+    color:white;
+    font-size:16px;
+    cursor:pointer;
+    transition:0.3s;
+}
+
+button:hover{
+    transform:scale(1.05);
+    box-shadow:0 5px 20px rgba(0,0,0,0.3);
+}
+
+</style>
+</head>
+
+
+<div class="container">
+
+<div class="right-panel">
+
+<h2>Create Job</h2>
+
+<form method="POST">
+
+{% csrf_token %}
+
+<label>Job Title</label>
+<input type="text" name="title" required>
+
+<label>Description</label>
+<textarea name="description" required></textarea>
+
+<label>Skills Required</label>
+<input type="text" name="skills_required" required>
+
+<label>Tech Stack</label>
+<input type="text" name="tech_stack" required>
+
+<label>Pay Per Hour</label>
+<input type="number" name="pay_per_hour" required>
+
+<label>Experience Level</label>
+
+<select name="experience_level">
+<option value="junior">Junior</option>
+<option value="mid">Mid Level</option>
+<option value="senior">Senior</option>
+</select>
+
+<button type="submit">Create Job</button>
+
+</form>
+
+</div>
+</div>
+
+{% endblock %}

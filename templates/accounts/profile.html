@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<h2>My Profile</h2>
+
+<hr>
+
+<p><strong>Username:</strong> {{ request.user.username }}</p>
+<p><strong>Email:</strong> {{ request.user.email }}</p>
+<p><strong>User Type:</strong> {{ profile.user_type }}</p>
+
+{% if profile.user_type == "freelancer" %}
+
+<h3>Freelancer Details</h3>
+
+<p><strong>Education:</strong> {{ profile.education }}</p>
+<p><strong>Skills:</strong> {{ profile.skills }}</p>
+<p><strong>Experience:</strong> {{ profile.experience }}</p>
+
+{% if profile.cv %}
+<p>
+<strong>CV:</strong>
+<a href="{{ profile.cv.url }}" target="_blank">Download CV</a>
+</p>
+{% endif %}
+
+{% endif %}
+
+
+{% if profile.user_type == "recruiter" %}
+
+<h3>Recruiter Details</h3>
+
+<p><strong>Company Name:</strong> {{ profile.company_name }}</p>
+
+{% endif %}
+
+{% endblock %}

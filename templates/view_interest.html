@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div style="max-width:800px;margin:40px auto;">
+
+<h2>Freelancers Interested in "{{ job.title }}"</h2>
+
+<table border="1" width="100%" cellpadding="10">
+
+<tr>
+<th>Freelancer</th>
+<th>Date</th>
+</tr>
+
+{% for interest in interests %}
+
+<tr>
+<td>{{ interest.freelancer.username }}</td>
+<td>{{ interest.created_at|date:"d M Y - h:i A" }}</td>
+</tr>
+
+{% empty %}
+
+<tr>
+<td colspan="2">No freelancers have shown interest yet.</td>
+</tr>
+
+{% endfor %}
+
+</table>
+
+<br>
+
+<a href="{% url 'recruiter_dashboard' %}">
+← Back to Dashboard
+</a>
+
+</div>
+
+{% endblock %}

@@ -1,0 +1,29 @@
+<h2>Job Details</h2>
+<hr>
+
+<h2>{{ job.title }}</h2>
+
+<p>{{ job.description }}</p>
+
+<p>Skills: {{ job.skills_required }}</p>
+
+<p>Tech Stack: {{ job.tech_stack }}</p>
+
+<p>Pay: {{ job.pay_per_hour }}</p>
+
+<p>Experience: {{ job.experience_level }}</p>
+
+<hr>
+
+{% if applied %}
+
+<p>You already applied</p>
+
+{% else %}
+
+<form method="POST" action="{% url 'apply_job' job.id %}">
+    {% csrf_token %}
+    <button type="submit">I'm Interested</button>
+</form>
+
+{% endif %}
