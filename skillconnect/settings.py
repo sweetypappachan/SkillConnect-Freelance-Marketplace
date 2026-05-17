@@ -83,6 +83,7 @@ CLOUDINARY_STORAGE = {
     'CLOUD_NAME': 'dnls9ncld',  # ← Replace this
     'API_KEY': '334239876168514',        # ← Replace this
     'API_SECRET': 'WUQ9_782GEWaEZ_CghjbOhBXpok',  # ← Replace this
+    'SECURE': True,
 }
 DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
 MEDIA_URL = '/media/'
@@ -95,5 +96,5 @@ EMAIL_HOST = 'smtp-relay.brevo.com'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 EMAIL_HOST_USER = 'sweetypappachan@gmail.com'
-EMAIL_HOST_PASSWORD = 'orfi wxrs qjcm lkmm'
+EMAIL_HOST_PASSWORD = 'orfiwxrsqjcmlkmm'
 DEFAULT_FROM_EMAIL = 'SkillConnect <sweetypappachan@gmail.com>'

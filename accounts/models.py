@@ -16,7 +16,16 @@ class Profile(models.Model):
     education = models.CharField(max_length=255, blank=True, null=True)
     skills = models.TextField(blank=True, null=True)
     experience = models.TextField(blank=True, null=True)
-    cv = models.FileField(upload_to='cv/', blank=True, null=True)
+from cloudinary_storage.storage import RawMediaCloudinaryStorage
+
+class Profile(models.Model):
+    ...
+    cv = models.FileField(
+        upload_to='cv/',
+        storage=RawMediaCloudinaryStorage(),
+        blank=True,
+        null=True
+    )
     about = models.TextField(blank=True, null=True)           # NEW: freelancer about/bio
 
     # Recruiter fields
