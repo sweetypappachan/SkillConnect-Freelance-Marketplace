@@ -24,8 +24,7 @@ SECRET_KEY = 'django-insecure-_a2_w&req#y5qae_8-m+t@x%p$(=3%7-@&1$tm4+vnee_qv#ve
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
-
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['skillconnect-be2b.onrender.com', 'localhost', '127.0.0.1']
 
 
 # Application definition
