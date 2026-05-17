@@ -1,41 +1,360 @@
 {% extends "base.html" %}
+{% load static %}
+{% block title %}Interested Freelancers — SkillConnect{% endblock %}
+
+{% block extra_head %}
+<style>
+.page-wrapper { padding: 48px 8% 72px; }
+
+.back-link {
+    display: inline-flex; align-items: center; gap: 8px;
+    color: #8fae74; text-decoration: none; font-size: 14px; font-weight: 600;
+    margin-bottom: 28px; transition: gap 0.2s;
+}
+.back-link:hover { gap: 12px; }
+
+.job-summary {
+    background: white; border-radius: 20px; padding: 32px 36px;
+    border: 1px solid #ece9e0; margin-bottom: 32px;
+    display: flex; justify-content: space-between; align-items: center;
+}
+.job-summary-left h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 26px; font-weight: 700; color: #1a1a1a; margin-bottom: 6px;
+}
+.job-summary-left p { color: #999; font-size: 14px; }
+.interest-count {
+    background: #eef3e8; color: #3a6e22;
+    padding: 10px 24px; border-radius: 40px;
+    font-size: 15px; font-weight: 700;
+    display: flex; align-items: center; gap: 8px;
+}
+
+.filter-bar { display: flex; gap: 8px; margin-bottom: 24px; flex-wrap: wrap; }
+.filter-btn {
+    padding: 8px 18px; border-radius: 40px;
+    background: white; border: 1.5px solid #ece9e0;
+    font-size: 13px; font-weight: 600; color: #666;
+    cursor: pointer; transition: all 0.2s; font-family: 'Outfit', sans-serif;
+}
+.filter-btn:hover { border-color: #8fae74; color: #8fae74; }
+.filter-btn.active { background: #8fae74; border-color: #8fae74; color: white; }
+
+.freelancers-grid {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px;
+}
+
+.freelancer-card {
+    background: white; border-radius: 20px; padding: 28px;
+    border: 1px solid #ece9e0; transition: all 0.25s;
+    position: relative; overflow: hidden; display: flex; flex-direction: column;
+}
+.freelancer-card::after {
+    content:""; position:absolute; bottom:0; left:0;
+    width:100%; height:3px; background:#8fae74;
+    transform:scaleX(0); transform-origin:left; transition:transform 0.28s;
+}
+.freelancer-card:hover { box-shadow:0 12px 40px rgba(0,0,0,0.09); transform:translateY(-4px); border-color:transparent; }
+.freelancer-card:hover::after { transform:scaleX(1); }
+
+.status-ribbon {
+    position: absolute; top: 16px; right: 16px;
+    display: inline-flex; align-items: center; gap: 5px;
+    padding: 4px 12px; border-radius: 40px; font-size: 11px; font-weight: 700;
+}
+.ribbon-pending     { background: #fffbeb; color: #d97706; border: 1px solid #fde68a; }
+.ribbon-shortlisted { background: #eff6ff; color: #2563eb; border: 1px solid #bfdbfe; }
+.ribbon-accepted    { background: #eef3e8; color: #3a6e22; border: 1px solid #c5ddb1; }
+.ribbon-rejected    { background: #fef2f2; color: #b91c1c; border: 1px solid #fecaca; }
+
+.fc-header { display: flex; align-items: center; gap: 14px; margin-bottom: 18px; }
+.fc-avatar {
+    width: 50px; height: 50px; border-radius: 14px;
+    background: linear-gradient(135deg, #8fae74, #5a8a42);
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Playfair Display', serif;
+    font-size: 20px; font-weight: 700; color: white; flex-shrink: 0;
+}
+.fc-name { font-family:'Playfair Display',serif; font-size:17px; font-weight:700; color:#1a1a1a; }
+.fc-email { font-size:13px; color:#999; margin-top:2px; }
+
+.fc-meta { margin-bottom:14px; flex:1; }
+.meta-row { display:flex; align-items:center; gap:8px; font-size:13px; color:#555; margin-bottom:6px; }
+.meta-row i { color:#8fae74; width:14px; text-align:center; font-size:12px; }
+
+.fc-message {
+    background: #f7f5f0; border-radius: 10px; padding: 14px;
+    font-size: 13.5px; color: #555; line-height: 1.65;
+    font-weight: 300; margin-bottom: 16px;
+    border-left: 3px solid #8fae74;
+}
+
+.skill-tags { display:flex; flex-wrap:wrap; gap:5px; margin-bottom:16px; }
+.skill-tag-sm {
+    padding:3px 10px; border-radius:40px;
+    background:#f7f5f0; border:1px solid #ece9e0;
+    font-size:11px; color:#666; font-weight:500;
+}
+
+.fc-actions { display:flex; flex-direction:column; gap:8px; margin-top:auto; }
+.fc-actions-row { display:flex; gap:8px; }
+
+.btn-accept {
+    flex:1; padding:10px; background:#eef3e8; border:1.5px solid #c5ddb1;
+    border-radius:10px; color:#3a6e22; font-size:13px; font-weight:600;
+    display:flex; align-items:center; justify-content:center; gap:6px;
+    cursor:pointer; font-family:'Outfit',sans-serif; transition:all 0.2s;
+}
+.btn-accept:hover { background:#8fae74; color:white; border-color:#8fae74; }
+.btn-accept.active { background:#8fae74; color:white; border-color:#8fae74; }
+
+.btn-shortlist {
+    flex:1; padding:10px; background:#eff6ff; border:1.5px solid #bfdbfe;
+    border-radius:10px; color:#2563eb; font-size:13px; font-weight:600;
+    display:flex; align-items:center; justify-content:center; gap:6px;
+    cursor:pointer; font-family:'Outfit',sans-serif; transition:all 0.2s;
+}
+.btn-shortlist:hover { background:#2563eb; color:white; border-color:#2563eb; }
+.btn-shortlist.active { background:#2563eb; color:white; border-color:#2563eb; }
+
+.btn-reject {
+    flex:1; padding:10px; background:#fef2f2; border:1.5px solid #fecaca;
+    border-radius:10px; color:#b91c1c; font-size:13px; font-weight:600;
+    display:flex; align-items:center; justify-content:center; gap:6px;
+    cursor:pointer; font-family:'Outfit',sans-serif; transition:all 0.2s;
+}
+.btn-reject:hover { background:#b91c1c; color:white; border-color:#b91c1c; }
+.btn-reject.active { background:#b91c1c; color:white; border-color:#b91c1c; }
+
+.btn-contact-full {
+    width:100%; padding:11px; background:#111; border:none;
+    border-radius:10px; color:white; font-size:13px; font-weight:600;
+    display:flex; align-items:center; justify-content:center; gap:6px;
+    cursor:pointer; font-family:'Outfit',sans-serif; text-decoration:none; transition:all 0.2s;
+}
+.btn-contact-full:hover { background:#333; }
+
+.btn-profile-view {
+    flex:1; padding:10px; background:#f7f5f0; border:1px solid #ece9e0;
+    border-radius:10px; color:#444; font-size:13px; font-weight:600;
+    display:flex; align-items:center; justify-content:center; gap:6px;
+    cursor:pointer; font-family:'Outfit',sans-serif; text-decoration:none; transition:all 0.2s;
+}
+.btn-profile-view:hover { border-color:#8fae74; color:#8fae74; }
+
+.btn-cv {
+    flex:1; padding:10px; background:#f7f5f0;
+    border:1px solid #ece9e0; border-radius:10px;
+    color:#444; font-size:13px; font-weight:600;
+    display:flex; align-items:center; justify-content:center; gap:6px;
+    cursor:pointer; font-family:'Outfit',sans-serif; text-decoration:none; transition:all 0.2s;
+}
+.btn-cv:hover { border-color:#8fae74; color:#8fae74; }
+
+.empty-state { text-align:center; padding:80px 20px; color:#aaa; }
+.empty-state i { font-size:48px; margin-bottom:20px; color:#ddd; display:block; }
+.empty-state h3 { font-family:'Playfair Display',serif; font-size:24px; color:#555; margin-bottom:10px; }
+
+.toast-container {
+    position:fixed; bottom:28px; left:50%; transform:translateX(-50%);
+    z-index:9999; display:flex; flex-direction:column; gap:10px; pointer-events:none;
+}
+.toast {
+    padding:14px 24px; border-radius:14px; font-size:14px; font-weight:600;
+    display:flex; align-items:center; gap:10px;
+    animation:toastIn 0.35s ease both; box-shadow:0 8px 32px rgba(0,0,0,0.15);
+    pointer-events:auto;
+}
+.toast-success { background:#1a1a1a; color:white; }
+@keyframes toastIn  { from{opacity:0;transform:translateY(16px);} to{opacity:1;transform:translateY(0);} }
+@keyframes toastOut { from{opacity:1;transform:translateY(0);} to{opacity:0;transform:translateY(16px);} }
+</style>
+{% endblock %}
 
 {% block content %}
+<div class="page-wrapper">
 
-<div style="max-width:800px;margin:40px auto;">
+    <a href="{% url 'recruiter_dashboard' %}" class="back-link">
+        <i class="fa-solid fa-arrow-left"></i> Back to Dashboard
+    </a>
 
-<h2>Freelancers Interested in "{{ job.title }}"</h2>
+    <div class="job-summary">
+        <div class="job-summary-left">
+            <h2>{{ job.title }}</h2>
+            <p>Freelancers who expressed interest in this position</p>
+        </div>
+        <div class="interest-count">
+            <i class="fa-solid fa-users"></i>
+            {{ interests|length }} Interested
+        </div>
+    </div>
 
-<table border="1" width="100%" cellpadding="10">
+    <!-- Filter buttons: All always visible; others hidden by default, shown by JS only if that status exists -->
+    <div class="filter-bar" id="filterBar">
+        <button class="filter-btn active" onclick="filterCards('all', this)">All ({{ interests|length }})</button>
+        <button class="filter-btn" onclick="filterCards('pending', this)"     data-filter="pending"     style="display:none;">Pending</button>
+        <button class="filter-btn" onclick="filterCards('shortlisted', this)" data-filter="shortlisted" style="display:none;">Shortlisted</button>
+        <button class="filter-btn" onclick="filterCards('accepted', this)"    data-filter="accepted"    style="display:none;">Accepted</button>
+        <button class="filter-btn" onclick="filterCards('rejected', this)"    data-filter="rejected"    style="display:none;">Rejected</button>
+    </div>
 
-<tr>
-<th>Freelancer</th>
-<th>Date</th>
-</tr>
+    {% if interests %}
+    <div class="freelancers-grid" id="candidatesGrid">
+        {% for interest in interests %}
+        <div class="freelancer-card" data-status="{{ interest.status|default:'pending' }}" data-id="{{ interest.id }}">
 
-{% for interest in interests %}
+            <div class="status-ribbon ribbon-{{ interest.status|default:'pending' }}">
+                {% if interest.status == 'accepted' %}<i class="fa-solid fa-circle-check"></i> Accepted
+                {% elif interest.status == 'rejected' %}<i class="fa-solid fa-circle-xmark"></i> Rejected
+                {% elif interest.status == 'shortlisted' %}<i class="fa-solid fa-star"></i> Shortlisted
+                {% else %}<i class="fa-solid fa-clock"></i> Pending{% endif %}
+            </div>
 
-<tr>
-<td>{{ interest.freelancer.username }}</td>
-<td>{{ interest.created_at|date:"d M Y - h:i A" }}</td>
-</tr>
+            <div class="fc-header">
+                <div class="fc-avatar">{{ interest.freelancer.first_name|first|upper }}</div>
+                <div>
+                    <div class="fc-name">{{ interest.freelancer.first_name }} {{ interest.freelancer.last_name }}</div>
+                    <div class="fc-email">{{ interest.freelancer.email }}</div>
+                </div>
+            </div>
 
-{% empty %}
+            <div class="fc-meta">
+                <div class="meta-row"><i class="fa-solid fa-at"></i> @{{ interest.freelancer.username }}</div>
+                <div class="meta-row"><i class="fa-solid fa-clock"></i> Applied {{ interest.created_at|date:"d M Y · h:i A" }}</div>
+                {% if interest.freelancer.profile.experience %}
+                <div class="meta-row">
+                    <i class="fa-solid fa-briefcase"></i>
+                    {{ interest.freelancer.profile.experience|truncatechars:40 }}
+                </div>
+                {% endif %}
+                {% if interest.freelancer.profile.education %}
+                <div class="meta-row">
+                    <i class="fa-solid fa-graduation-cap"></i>
+                    {{ interest.freelancer.profile.education|truncatechars:40 }}
+                </div>
+                {% endif %}
+            </div>
 
-<tr>
-<td colspan="2">No freelancers have shown interest yet.</td>
-</tr>
+            {% if interest.freelancer.profile.skills %}
+            <div class="skill-tags">
+                {% for skill in interest.freelancer.profile.skills.split %}
+                <span class="skill-tag-sm">{{ skill|truncatechars:15 }}</span>
+                {% endfor %}
+            </div>
+            {% endif %}
 
-{% endfor %}
+            {% if interest.message %}
+            <div class="fc-message">
+                <i class="fa-solid fa-quote-left" style="color:#8fae74;font-size:10px;margin-right:6px;"></i>
+                {{ interest.message }}
+            </div>
+            {% endif %}
 
-</table>
+            <!-- ACTIONS -->
+            <div class="fc-actions">
+                <div class="fc-actions-row">
+                    <form method="POST" action="{% url 'update_interest_status' interest.id 'shortlisted' %}" style="flex:1;">
+                        {% csrf_token %}
+                        <button type="submit" class="btn-shortlist {% if interest.status == 'shortlisted' %}active{% endif %}" style="width:100%;">
+                            <i class="fa-solid fa-star"></i> Shortlist
+                        </button>
+                    </form>
+                    <form method="POST" action="{% url 'update_interest_status' interest.id 'accepted' %}" style="flex:1;">
+                        {% csrf_token %}
+                        <button type="submit" class="btn-accept {% if interest.status == 'accepted' %}active{% endif %}" style="width:100%;">
+                            <i class="fa-solid fa-circle-check"></i> Accept
+                        </button>
+                    </form>
+                    <form method="POST" action="{% url 'update_interest_status' interest.id 'rejected' %}" style="flex:1;">
+                        {% csrf_token %}
+                        <button type="submit" class="btn-reject {% if interest.status == 'rejected' %}active{% endif %}" style="width:100%;"
+                            onclick="return confirm('Reject this candidate? They will be notified.')">
+                            <i class="fa-solid fa-circle-xmark"></i> Reject
+                        </button>
+                    </form>
+                </div>
+                <div class="fc-actions-row">
+                    <a href="{% url 'view_freelancer_profile' interest.freelancer.id %}" class="btn-profile-view">
+                        <i class="fa-solid fa-user"></i> View Profile
+                    </a>
+                    {% if interest.freelancer.profile.cv %}
+                    <a href="{{ interest.freelancer.profile.cv.url }}" target="_blank" class="btn-cv">
+                        <i class="fa-solid fa-file-lines"></i> CV
+                    </a>
+                    {% else %}
+                    <span class="btn-cv" style="cursor:default;opacity:0.5;">
+                        <i class="fa-solid fa-file-lines"></i> No CV
+                    </span>
+                    {% endif %}
+                </div>
+                <div class="fc-actions-row">
+                    <a href="mailto:{{ interest.freelancer.email }}" class="btn-contact-full">
+                        <i class="fa-solid fa-envelope"></i> Contact Candidate
+                    </a>
+                </div>
+            </div>
 
-<br>
+        </div>
+        {% endfor %}
+    </div>
 
-<a href="{% url 'recruiter_dashboard' %}">
-← Back to Dashboard
-</a>
+    {% else %}
+    <div class="empty-state">
+        <i class="fa-solid fa-users"></i>
+        <h3>No Interest Yet</h3>
+        <p>No freelancers have expressed interest in this job yet. Check back soon!</p>
+    </div>
+    {% endif %}
 
 </div>
 
+<div class="toast-container" id="toastContainer"></div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    // Collect which statuses actually have cards
+    const counts = {};
+    document.querySelectorAll('.freelancer-card').forEach(function (card) {
+        const s = card.dataset.status;
+        counts[s] = (counts[s] || 0) + 1;
+    });
+
+    // Show only filter buttons whose status exists, and add count to label
+    document.querySelectorAll('.filter-btn[data-filter]').forEach(function (btn) {
+        const s = btn.dataset.filter;
+        if (counts[s]) {
+            btn.style.display = '';
+            const label = s.charAt(0).toUpperCase() + s.slice(1);
+            btn.textContent = label + ' (' + counts[s] + ')';
+        }
+    });
+});
+
+function filterCards(status, btn) {
+    document.querySelectorAll('.filter-btn').forEach(function (b) { b.classList.remove('active'); });
+    btn.classList.add('active');
+    document.querySelectorAll('.freelancer-card').forEach(function (card) {
+        card.style.display = (status === 'all' || card.dataset.status === status) ? '' : 'none';
+    });
+}
+
+function showToast(msg, type) {
+    type = type || 'success';
+    const tc    = document.getElementById('toastContainer');
+    const toast = document.createElement('div');
+    toast.className = 'toast toast-' + type;
+    toast.innerHTML = '<i class="fa-solid fa-circle-check"></i> ' + msg;
+    tc.appendChild(toast);
+    setTimeout(function () {
+        toast.style.animation = 'toastOut 0.35s ease forwards';
+        setTimeout(function () { toast.remove(); }, 400);
+    }, 3000);
+}
+
+{% if messages %}
+{% for message in messages %}
+showToast("{{ message }}", "success");
+{% endfor %}
+{% endif %}
+</script>
 {% endblock %}

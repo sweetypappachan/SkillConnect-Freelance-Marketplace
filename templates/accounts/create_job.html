@@ -1,166 +1,212 @@
 {% extends "base.html" %}
 {% load static %}
-{% block content %}
+{% block title %}Post a Job — SkillConnect{% endblock %}
 
-<head>
-<title>Create Job - SkillConnect</title>
-
+{% block extra_head %}
 <style>
+.page-wrapper { padding: 48px 8% 72px; }
 
-html, body{
-    height:100%;
+.form-layout {
+    display: grid;
+    grid-template-columns: 1fr 380px;
+    gap: 28px;
+    align-items: start;
 }
 
-body{
-    margin:0;
-    padding:0;
-    font-family: 'Segoe UI', sans-serif;
-    background: url("{% static 'images/login.jpg' %}") no-repeat center center;
-    background-size:cover;
-    background-attachment:fixed;
-    position: relative;
-    display:flex;
-    flex-direction:column;
+.form-card {
+    background: white; border-radius: 24px; padding: 44px;
+    border: 1px solid #ece9e0; box-shadow: 0 4px 24px rgba(0,0,0,0.06);
 }
-
-/* navbar fix */
-.navbar{
-    position:relative;
-    z-index:10;
+.form-card h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 28px; font-weight: 800; color: #1a1a1a; margin-bottom: 6px;
 }
+.form-card .sub { color: #999; font-size: 14px; margin-bottom: 36px; font-weight: 300; }
 
-/* background overlay */
-body::before{
-    content:"";
-    position:absolute;
-    top:0;
-    left:0;
-    width:100%;
-    height:100%;
-    background:rgba(0,0,0,0.4);
-    backdrop-filter: blur(3px);
-    z-index:1;
+.form-section-label {
+    font-size: 11px; font-weight: 600; text-transform: uppercase;
+    letter-spacing: 0.09em; color: #aaa;
+    margin-bottom: 18px; margin-top: 28px;
+    display: flex; align-items: center; gap: 10px;
 }
+.form-section-label::after { content:""; flex:1; height:1px; background:#ece9e0; }
+.form-section-label:first-of-type { margin-top: 0; }
 
-/* main container */
-.container{
-    position:relative;
-    z-index:2;
-    flex:1;
-    min-height:calc(100vh - 120px); /* pushes footer down */
-    display:flex;
-    justify-content:center;
-    align-items:center;
+.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.form-group { margin-bottom: 18px; }
+.form-group label {
+    display: block; font-size: 13px; font-weight: 600;
+    color: #333; margin-bottom: 8px;
 }
+.form-group label span { color: #8fae74; margin-left: 2px; }
 
-/* glass panel */
-.right-panel{
-    width:420px;
-    padding:40px;
-    border-radius:20px;
-    background: rgba(255,255,255,0.15);
-    backdrop-filter: blur(15px);
-    box-shadow: 0 8px 32px rgba(0,0,0,0.3);
-    color:white;
+.form-group input,
+.form-group textarea,
+.form-group select {
+    width: 100%; padding: 13px 16px;
+    background: #f7f5f0; border: 1px solid #ece9e0;
+    border-radius: 12px; font-size: 14px; color: #1a1a1a;
+    outline: none; font-family: 'Outfit', sans-serif;
+    transition: all 0.2s;
 }
-
-/* heading */
-.right-panel h2{
-    text-align:center;
-    margin-bottom:15px;
-    font-size:28px;
+.form-group input:focus,
+.form-group textarea:focus,
+.form-group select:focus {
+    background: white;
+    border-color: #8fae74;
+    box-shadow: 0 0 0 3px rgba(143,174,116,0.12);
 }
+.form-group input::placeholder,
+.form-group textarea::placeholder { color: #bbb; }
+.form-group textarea { resize: vertical; min-height: 120px; }
+.form-group select { cursor: pointer; appearance: none; }
 
-/* labels */
-label{
-    display:block;
-    margin-top:15px;
-    font-size:14px;
+.submit-btn {
+    width: 100%; margin-top: 8px;
+    padding: 15px; background: #8fae74; border: none;
+    border-radius: 12px; color: white; font-size: 15px; font-weight: 600;
+    cursor: pointer; font-family: 'Outfit', sans-serif;
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+    transition: all 0.25s;
 }
+.submit-btn:hover { background: #7a9962; transform: translateY(-2px); box-shadow: 0 8px 24px rgba(143,174,116,0.35); }
 
-/* inputs */
-input, textarea, select{
-    width:100%;
-    padding:12px;
-    margin-top:5px;
-    border:none;
-    border-bottom:2px solid rgba(255,255,255,0.6);
-    background:transparent;
-    color:white;
-    font-size:15px;
-    outline:none;
+/* SIDEBAR */
+.sidebar-card {
+    background: #111; color: white;
+    border-radius: 24px; padding: 36px;
+    position: sticky; top: 90px;
+    overflow: hidden;
 }
-
-textarea{
-    resize:none;
-    height:80px;
+.sidebar-card::before {
+    content:""; position:absolute; inset:0;
+    background-image:radial-gradient(rgba(143,174,116,0.1) 1px,transparent 1px);
+    background-size:22px 22px;
 }
+.sidebar-inner { position:relative; z-index:2; }
+.sidebar-tag { font-size:11px; font-weight:600; letter-spacing:0.1em; text-transform:uppercase; color:#8fae74; margin-bottom:14px; display:block; }
+.sidebar-card h3 { font-family:'Playfair Display',serif; font-size:22px; font-weight:700; line-height:1.3; margin-bottom:16px; }
+.sidebar-card p { color:rgba(255,255,255,0.5); font-size:13.5px; line-height:1.75; font-weight:300; margin-bottom:28px; }
 
-select option{
-    color:black;
+.tip-list { list-style:none; }
+.tip-list li {
+    display:flex; align-items:flex-start; gap:10px;
+    font-size:13px; color:rgba(255,255,255,0.55);
+    margin-bottom:14px; line-height:1.55;
 }
+.tip-list li i { color:#8fae74; margin-top:2px; flex-shrink:0; font-size:12px; }
 
-/* button */
-button{
-    width:100%;
-    padding:12px;
-    margin-top:30px;
-    border:none;
-    border-radius:25px;
-    background: linear-gradient(90deg,#4facfe,#00f2fe);
-    color:white;
-    font-size:16px;
-    cursor:pointer;
-    transition:0.3s;
+.exp-selector {
+    display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px;
+    margin-top: 4px;
 }
-
-button:hover{
-    transform:scale(1.05);
-    box-shadow:0 5px 20px rgba(0,0,0,0.3);
+.exp-radio { display:none; }
+.exp-label {
+    display:flex; flex-direction:column; align-items:center;
+    padding:12px 8px; border-radius:10px;
+    background:#f7f5f0; border:1.5px solid #ece9e0;
+    cursor:pointer; transition:all 0.2s;
+    font-size:12px; font-weight:600; color:#888; gap:4px;
 }
-
+.exp-label i { font-size:14px; }
+.exp-radio:checked + .exp-label {
+    background:#eef3e8; border-color:#8fae74; color:#3a6e22;
+}
 </style>
-</head>
+{% endblock %}
 
+{% block content %}
+<div class="page-wrapper">
 
-<div class="container">
+<div class="page-header">
+    <h1>Post a New Job</h1>
+    <p>Fill in the details below to attract the right freelancers</p>
+</div>
 
-<div class="right-panel">
+<div class="form-layout">
 
-<h2>Create Job</h2>
+    <!-- FORM -->
+    <div class="form-card">
+        <h2>Job Details</h2>
+        <p class="sub">Be specific to get better applications</p>
 
-<form method="POST">
+        <form method="POST">
+            {% csrf_token %}
 
-{% csrf_token %}
+            <div class="form-section-label">Basic Info</div>
 
-<label>Job Title</label>
-<input type="text" name="title" required>
+            <div class="form-group">
+                <label>Job Title <span>*</span></label>
+                <input type="text" name="title" placeholder="e.g. React Frontend Developer" required>
+            </div>
 
-<label>Description</label>
-<textarea name="description" required></textarea>
+            <div class="form-group">
+                <label>Job Description <span>*</span></label>
+                <textarea name="description" placeholder="Describe the role, responsibilities, and what you're looking for…" required></textarea>
+            </div>
 
-<label>Skills Required</label>
-<input type="text" name="skills_required" required>
+            <div class="form-section-label">Technical Requirements</div>
 
-<label>Tech Stack</label>
-<input type="text" name="tech_stack" required>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Skills Required <span>*</span></label>
+                    <input type="text" name="skills_required" placeholder="e.g. React, TypeScript, CSS" required>
+                </div>
+                <div class="form-group">
+                    <label>Tech Stack <span>*</span></label>
+                    <input type="text" name="tech_stack" placeholder="e.g. Next.js, Tailwind, Vercel" required>
+                </div>
+            </div>
 
-<label>Pay Per Hour</label>
-<input type="number" name="pay_per_hour" required>
+            <div class="form-section-label">Compensation & Experience</div>
 
-<label>Experience Level</label>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Pay Per Hour (₹) <span>*</span></label>
+                    <input type="number" name="pay_per_hour" placeholder="e.g. 500" min="1" required>
+                </div>
+                <div class="form-group">
+                    <label>Experience Level <span>*</span></label>
+                    <div class="exp-selector">
+                        <input type="radio" name="experience_level" value="junior" id="exp-junior" class="exp-radio" required>
+                        <label for="exp-junior" class="exp-label">
+                            <i class="fa-solid fa-seedling"></i> Junior
+                        </label>
+                        <input type="radio" name="experience_level" value="mid" id="exp-mid" class="exp-radio">
+                        <label for="exp-mid" class="exp-label">
+                            <i class="fa-solid fa-chart-line"></i> Mid
+                        </label>
+                        <input type="radio" name="experience_level" value="senior" id="exp-senior" class="exp-radio">
+                        <label for="exp-senior" class="exp-label">
+                            <i class="fa-solid fa-star"></i> Senior
+                        </label>
+                    </div>
+                </div>
+            </div>
 
-<select name="experience_level">
-<option value="junior">Junior</option>
-<option value="mid">Mid Level</option>
-<option value="senior">Senior</option>
-</select>
+            <button type="submit" class="submit-btn">
+                <i class="fa-solid fa-paper-plane"></i> Post Job
+            </button>
+        </form>
+    </div>
 
-<button type="submit">Create Job</button>
+    <!-- SIDEBAR -->
+    <div class="sidebar-card">
+        <div class="sidebar-inner">
+            <span class="sidebar-tag">Tips for Success</span>
+            <h3>Get More Qualified Applicants</h3>
+            <p>Jobs with detailed descriptions receive up to 3x more relevant interest from freelancers.</p>
 
-</form>
+            <ul class="tip-list">
+                <li><i class="fa-solid fa-check"></i> Use a clear, specific job title that freelancers search for</li>
+                <li><i class="fa-solid fa-check"></i> List all required skills and technologies clearly</li>
+                <li><i class="fa-solid fa-check"></i> Set a competitive pay rate to attract top talent</li>
+                <li><i class="fa-solid fa-check"></i> Describe the project scope and expected duration</li>
+                <li><i class="fa-solid fa-check"></i> Mention any must-have experience or portfolio requirements</li>
+            </ul>
+        </div>
+    </div>
 
 </div>
 </div>
-
 {% endblock %}

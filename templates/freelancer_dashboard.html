@@ -1,243 +1,422 @@
 {% extends "base.html" %}
+{% load static %}
+{% block title %}Freelancer Dashboard — SkillConnect{% endblock %}
+
+{% block extra_head %}
+<style>
+.page-wrapper { padding: 48px 8% 72px; }
+
+/* HERO STRIP */
+.dash-hero {
+    background: linear-gradient(135deg, #111 0%, #1c2615 100%);
+    border-radius: 24px; padding: 40px 48px;
+    display: flex; justify-content: space-between; align-items: center;
+    margin-bottom: 40px; overflow: hidden; position: relative;
+}
+.dash-hero::before {
+    content:""; position:absolute; inset:0;
+    background-image: radial-gradient(rgba(143,174,116,0.08) 1px, transparent 1px);
+    background-size: 24px 24px;
+}
+.dash-hero-text { position:relative; z-index:2; }
+.dash-hero-text .greeting { font-size:12px; font-weight:600; letter-spacing:0.1em; text-transform:uppercase; color:#8fae74; margin-bottom:8px; }
+.dash-hero-text h1 { font-family:'Playfair Display',serif; font-size:34px; font-weight:800; color:white; margin-bottom:8px; letter-spacing:-0.3px; }
+.dash-hero-text p { color:rgba(255,255,255,0.5); font-size:15px; font-weight:300; }
+
+
+/* TOOLBAR */
+.toolbar { display:flex; justify-content:space-between; align-items:center; margin-bottom:28px; }
+.toolbar-left h2 { font-family:'Playfair Display',serif; font-size:26px; font-weight:700; color:#1a1a1a; }
+.toolbar-left p { color:#999; font-size:14px; margin-top:2px; }
+
+.search-bar { display:flex; gap:10px; align-items:center; }
+.search-wrap { position:relative; }
+.search-wrap i { position:absolute; left:14px; top:50%; transform:translateY(-50%); color:#aaa; font-size:13px; }
+.search-wrap input {
+    padding:11px 14px 11px 38px; background:white;
+    border:1px solid #ece9e0; border-radius:12px; font-size:14px;
+    color:#1a1a1a; outline:none; width:220px;
+    font-family:'Outfit',sans-serif; transition:border-color 0.2s;
+}
+.search-wrap input:focus { border-color:#8fae74; box-shadow:0 0 0 3px rgba(143,174,116,0.12); }
+.search-wrap input::placeholder { color:#bbb; }
+
+.filter-select {
+    padding:11px 14px; background:white; border:1px solid #ece9e0;
+    border-radius:12px; font-size:14px; color:#444;
+    outline:none; cursor:pointer; font-family:'Outfit',sans-serif; transition:border-color 0.2s;
+}
+.filter-select:focus { border-color:#8fae74; }
+
+.btn-search {
+    padding:11px 20px; background:#8fae74; border:none; border-radius:12px;
+    color:white; font-size:14px; cursor:pointer;
+    font-family:'Outfit',sans-serif; font-weight:600; transition:all 0.2s;
+}
+.btn-search:hover { background:#7a9962; }
+
+/* JOB GRID */
+.job-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:20px; margin-bottom:40px; }
+
+.job-card {
+    background:white; border-radius:20px; padding:28px;
+    border:1px solid #ece9e0; transition:all 0.28s;
+    position:relative; overflow:hidden; display:flex; flex-direction:column;
+}
+.job-card::after {
+    content:""; position:absolute; bottom:0; left:0;
+    width:100%; height:3px; background:#8fae74;
+    transform:scaleX(0); transform-origin:left; transition:transform 0.28s ease;
+}
+.job-card:hover { box-shadow:0 12px 40px rgba(0,0,0,0.09); transform:translateY(-4px); border-color:transparent; }
+.job-card:hover::after { transform:scaleX(1); }
+
+.job-card-header { display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:16px; }
+.job-icon { width:44px; height:44px; background:#eef3e8; border-radius:12px; display:flex; align-items:center; justify-content:center; }
+.job-icon i { color:#6a9050; font-size:16px; }
+
+.exp-badge { font-size:11px; font-weight:600; padding:4px 10px; border-radius:40px; background:#f7f5f0; color:#888; }
+.exp-badge.junior  { background:#eef3e8; color:#3a6e22; }
+.exp-badge.mid     { background:#eff6ff; color:#1d4ed8; }
+.exp-badge.senior  { background:#fef3e8; color:#c2410c; }
+
+.job-title { font-family:'Playfair Display',serif; font-size:18px; font-weight:700; color:#1a1a1a; margin-bottom:10px; line-height:1.3; }
+.job-desc { font-size:13.5px; color:#777; line-height:1.65; font-weight:300; margin-bottom:16px; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; }
+
+.job-meta { margin-bottom:20px; flex:1; }
+.meta-row { display:flex; align-items:center; gap:8px; font-size:13px; color:#555; margin-bottom:7px; }
+.meta-row i { color:#8fae74; width:14px; text-align:center; font-size:12px; }
+
+.job-tags { display:flex; flex-wrap:wrap; gap:6px; margin-bottom:20px; }
+.tag { padding:4px 10px; border-radius:40px; background:#f7f5f0; border:1px solid #ece9e0; font-size:11px; color:#666; font-weight:500; }
+
+.interest-btn {
+    width:100%; padding:12px; background:#8fae74; border:none; border-radius:12px;
+    color:white; font-size:14px; font-weight:600; cursor:pointer;
+    font-family:'Outfit',sans-serif;
+    display:flex; align-items:center; justify-content:center; gap:8px;
+    transition:all 0.2s; margin-top:auto;
+}
+.interest-btn:hover { background:#7a9962; transform:translateY(-1px); box-shadow:0 6px 20px rgba(143,174,116,0.35); }
+
+/* SENT STATE - shows status too */
+.interest-btn.sent {
+    background:#eef3e8; color:#3a6e22; cursor:pointer;
+    border:1.5px solid #8fae74;
+}
+.interest-btn.sent:hover { background:#d4edca; transform:none; box-shadow:none; }
+
+.interest-btn.sent-rejected {
+    background:#fef2f2; color:#b91c1c;
+    border:1.5px solid #fecaca; cursor:default;
+}
+.interest-btn.sent-shortlisted {
+    background:#eff6ff; color:#2563eb;
+    border:1.5px solid #bfdbfe; cursor:default;
+}
+.interest-btn.sent-accepted {
+    background:#eef3e8; color:#3a6e22;
+    border:1.5px solid #c5ddb1; cursor:default;
+}
+
+/* ALREADY APPLIED MODAL (center popup) */
+.modal-overlay {
+    position:fixed; inset:0; background:rgba(0,0,0,0.45);
+    backdrop-filter:blur(4px);
+    display:flex; align-items:center; justify-content:center;
+    z-index:9999; opacity:0; pointer-events:none; transition:opacity 0.3s;
+}
+.modal-overlay.show { opacity:1; pointer-events:auto; }
+
+.modal-box {
+    background:white; border-radius:24px; padding:44px;
+    max-width:420px; width:90%; text-align:center;
+    transform:scale(0.9) translateY(20px); transition:all 0.35s;
+    box-shadow:0 24px 64px rgba(0,0,0,0.2);
+}
+.modal-overlay.show .modal-box { transform:scale(1) translateY(0); }
+
+.modal-icon {
+    width:64px; height:64px; border-radius:20px;
+    background:#eef3e8; border:2px solid #c5ddb1;
+    display:flex; align-items:center; justify-content:center;
+    margin:0 auto 20px; font-size:26px; color:#3a6e22;
+}
+.modal-box h3 {
+    font-family:'Playfair Display',serif;
+    font-size:22px; font-weight:800; color:#1a1a1a; margin-bottom:8px;
+}
+.modal-box p { font-size:14px; color:#777; line-height:1.65; margin-bottom:24px; }
+.modal-close {
+    padding:12px 32px; background:#8fae74; border:none;
+    border-radius:12px; color:white; font-size:14px; font-weight:600;
+    cursor:pointer; font-family:'Outfit',sans-serif; transition:all 0.2s;
+}
+.modal-close:hover { background:#7a9962; }
+
+/* INTEREST SENT TOAST */
+.toast-container {
+    position:fixed; bottom:28px; left:50%; transform:translateX(-50%);
+    z-index:9998; display:flex; flex-direction:column; gap:10px;
+    pointer-events:none;
+}
+.toast {
+    padding:14px 24px; border-radius:14px;
+    background:#1a1a1a; color:white;
+    font-size:14px; font-weight:600;
+    display:flex; align-items:center; gap:10px;
+    animation:toastIn 0.35s ease both;
+    box-shadow:0 8px 32px rgba(0,0,0,0.2);
+    white-space:nowrap;
+}
+@keyframes toastIn  { from{opacity:0;transform:translateY(16px);} to{opacity:1;transform:translateY(0);} }
+@keyframes toastOut { from{opacity:1;} to{opacity:0;transform:translateY(16px);} }
+
+/* STATUS IN SENT BUTTON */
+.status-icon { font-size:13px; }
+
+/* PAGINATION */
+.pagination { display:flex; justify-content:center; align-items:center; gap:8px; }
+.pagination a, .pagination span {
+    padding:9px 16px; background:white; border:1px solid #ece9e0;
+    border-radius:10px; font-size:13px; font-weight:500;
+    color:#444; text-decoration:none; transition:all 0.2s;
+}
+.pagination a:hover { border-color:#8fae74; color:#8fae74; }
+.pagination .current { background:#8fae74; color:white; border-color:#8fae74; }
+
+.empty-state { grid-column:1/-1; text-align:center; padding:60px 20px; color:#aaa; }
+.empty-state i { font-size:40px; margin-bottom:16px; color:#ddd; display:block; }
+.empty-state h3 { font-family:'Playfair Display',serif; font-size:22px; color:#555; margin-bottom:8px; }
+</style>
+{% endblock %}
 
 {% block content %}
+<div class="page-wrapper">
 
-<!-- Font Awesome Icons -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-
-<style>
-
-/* Page background */
-body{
-    background:#f4f6fb;
-}
-
-/* Main container */
-.dashboard-container{
-    width:90%;
-    margin:auto;
-    padding-top:30px;
-}
-
-/* Header */
-.dashboard-header{
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    margin-bottom:25px;
-}
-
-/* Title */
-.dashboard-header h2{
-    font-weight:600;
-}
-
-/* Search area */
-.search-form{
-    display:flex;
-    gap:10px;
-}
-
-.search-form input{
-    padding:10px;
-    border-radius:6px;
-    border:1px solid #ccc;
-    width:220px;
-}
-
-.search-form select{
-    padding:10px;
-    border-radius:6px;
-    border:1px solid #ccc;
-}
-
-.search-form button{
-    background:#2d89ef;
-    color:white;
-    border:none;
-    padding:10px 16px;
-    border-radius:6px;
-    cursor:pointer;
-}
-
-.search-form button:hover{
-    background:#1a66c9;
-}
-
-/* Job grid */
-.job-grid{
-    display:grid;
-    grid-template-columns:repeat(3,1fr);
-    gap:20px;
-}
-
-/* Job card */
-.job-card{
-    background:white;
-    border-radius:10px;
-    padding:20px;
-    box-shadow:0 3px 8px rgba(0,0,0,0.05);
-    transition:0.2s;
-}
-
-.job-card:hover{
-    transform:translateY(-4px);
-}
-
-/* Job title */
-.job-title{
-    font-size:18px;
-    font-weight:600;
-    margin-bottom:8px;
-}
-
-/* Description */
-.job-desc{
-    font-size:14px;
-    color:#555;
-    margin-bottom:10px;
-}
-
-/* Info rows */
-.job-info{
-    font-size:14px;
-    margin:6px 0;
-    color:#444;
-}
-
-.job-info i{
-    color:#2d89ef;
-    margin-right:6px;
-}
-
-/* Interest button */
-.interest-btn{
-    margin-top:15px;
-    width:100%;
-    padding:10px;
-    border:none;
-    border-radius:6px;
-    background:#28a745;
-    color:white;
-    font-weight:500;
-    cursor:pointer;
-}
-
-.interest-btn:hover{
-    background:#1e7e34;
-}
-
-/* Pagination */
-.pagination{
-    margin-top:35px;
-    text-align:center;
-}
-
-.pagination a{
-    padding:8px 14px;
-    margin:5px;
-    background:white;
-    border:1px solid #ddd;
-    border-radius:5px;
-    text-decoration:none;
-}
-
-</style>
-
-
-<div class="dashboard-container">
-
-<!-- Header -->
-<div class="dashboard-header">
-
-<h2>Freelancer Dashboard</h2>
-
-<form method="GET" class="search-form">
-
-<input type="text" name="search" placeholder="Search job">
-
-<select name="sort">
-<option value="date">Sort by Date</option>
-<option value="pay">Sort by Pay</option>
-</select>
-
-<button type="submit">
-<i class="fa fa-search"></i>
-</button>
-
-</form>
+<!-- HERO -->
+<div class="dash-hero">
+    <div class="dash-hero-text">
+        <div class="greeting">Freelancer Dashboard</div>
+        <h1>Welcome, {{ request.user.first_name }} 👋</h1>
+        <p>Find projects that match your skills and grow your career.</p>
+    </div>
 
 </div>
 
+<!-- TOOLBAR -->
+<div class="toolbar">
+    <div class="toolbar-left">
+        <h2>Available Jobs</h2>
+        <p>Browse and express interest in open positions</p>
+    </div>
+    <form method="GET" class="search-bar">
+        <div class="search-wrap">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <input type="text" name="search" placeholder="Search jobs…" value="{{ request.GET.search }}">
+        </div>
+        <select name="sort" class="filter-select">
+            <option value="date" {% if request.GET.sort == "date" %}selected{% endif %}>Latest First</option>
+            <option value="pay"  {% if request.GET.sort == "pay" %}selected{% endif %}>Highest Pay</option>
+        </select>
+        <button type="submit" class="btn-search">
+            <i class="fa-solid fa-magnifying-glass"></i>
+        </button>
+    </form>
+</div>
 
-<!-- Job Cards -->
+<!-- JOB CARDS -->
 <div class="job-grid">
+    {% for job in page_obj %}
+    <div class="job-card">
 
-{% for job in page_obj %}
+        <div class="job-card-header">
+            <div class="job-icon"><i class="fa-solid fa-briefcase"></i></div>
+            <span class="exp-badge {{ job.experience_level }}">{{ job.get_experience_level_display }}</span>
+        </div>
 
-<div class="job-card">
+        <div class="job-title">{{ job.title }}</div>
+        <div class="job-desc">{{ job.description }}</div>
 
-<div class="job-title">
-<i class="fa-solid fa-briefcase"></i> {{ job.title }}
+        <div class="job-meta">
+            <div class="meta-row">
+                <i class="fa-solid fa-indian-rupee-sign"></i>
+                ₹{{ job.pay_per_hour }} / hour
+            </div>
+            <div class="meta-row">
+                <i class="fa-solid fa-code"></i>
+                {{ job.skills_required }}
+            </div>
+            <div class="meta-row">
+                <i class="fa-solid fa-clock"></i>
+                {{ job.created_at|date:"d M Y" }}
+            </div>
+        </div>
+
+        <div class="job-tags">
+            {% for skill in job.skill_list %}
+                <span class="tag">{{ skill }}</span>
+            {% endfor %}
+        </div>
+
+        {% if job.id in sent_interest_ids %}
+            <!-- Already applied: show status and make button trigger popup -->
+            {% with status=interest_status_map|default:"{}" %}
+            {% if job.id in rejected_ids %}
+                <button class="interest-btn sent-rejected" type="button" onclick="showAlreadyApplied('{{ job.title }}', 'rejected')">
+                    <i class="fa-solid fa-circle-xmark status-icon"></i> Not Selected
+                </button>
+            {% elif job.id in shortlisted_ids %}
+                <button class="interest-btn sent-shortlisted" type="button" onclick="showAlreadyApplied('{{ job.title }}', 'shortlisted')">
+                    <i class="fa-solid fa-star status-icon"></i> Shortlisted!
+                </button>
+            {% elif job.id in accepted_ids %}
+                <button class="interest-btn sent-accepted" type="button" onclick="showAlreadyApplied('{{ job.title }}', 'accepted')">
+                    <i class="fa-solid fa-circle-check status-icon"></i> Accepted!
+                </button>
+            {% else %}
+                <button class="interest-btn sent" type="button" onclick="showAlreadyApplied('{{ job.title }}', 'pending')">
+                    <i class="fa-solid fa-circle-check status-icon"></i> Interest Sent
+                </button>
+            {% endif %}
+            {% endwith %}
+        {% else %}
+            <form action="{% url 'send_interest' job.id %}" method="POST" onsubmit="onInterestSubmit(event, this, '{{ job.title }}')">
+                {% csrf_token %}
+                <button class="interest-btn" type="submit">
+                    <i class="fa-solid fa-paper-plane"></i> Send Interest
+                </button>
+            </form>
+        {% endif %}
+
+    </div>
+    {% empty %}
+    <div class="empty-state">
+        <i class="fa-solid fa-briefcase"></i>
+        <h3>No Jobs Available</h3>
+        <p>Check back later for new opportunities.</p>
+    </div>
+    {% endfor %}
 </div>
 
-<div class="job-desc">
-{{ job.description }}
-</div>
-
-<div class="job-info">
-<i class="fa-solid fa-money-bill"></i>
-Pay: ₹ {{ job.pay_per_hour }} / hour
-</div>
-
-<div class="job-info">
-<i class="fa-solid fa-code"></i>
-Skills: {{ job.skills_required }}
-</div>
-
-<div class="job-info">
-<i class="fa-solid fa-clock"></i>
-{{ job.created_at|date:"d M Y - h:i A" }}
-</div>
-
-<form action="{% url 'send_interest' job.id %}" method="POST">
-{% csrf_token %}
-
-<button class="interest-btn">
-<i class="fa-solid fa-paper-plane"></i>
-Send Interest
-</button>
-
-</form>
-
-</div>
-
-{% empty %}
-
-<p>No jobs available</p>
-
-{% endfor %}
-
-</div>
-
-
-<!-- Pagination -->
+<!-- PAGINATION -->
 <div class="pagination">
-
-{% if page_obj.has_previous %}
-<a href="?page=1">First</a>
-<a href="?page={{ page_obj.previous_page_number }}">Previous</a>
-{% endif %}
-
-Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
-
-{% if page_obj.has_next %}
-<a href="?page={{ page_obj.next_page_number }}">Next</a>
-{% endif %}
+    {% if page_obj.has_previous %}
+        <a href="?page=1">« First</a>
+        <a href="?page={{ page_obj.previous_page_number }}">‹ Prev</a>
+    {% endif %}
+    <span class="current">{{ page_obj.number }} / {{ page_obj.paginator.num_pages }}</span>
+    {% if page_obj.has_next %}
+        <a href="?page={{ page_obj.next_page_number }}">Next ›</a>
+    {% endif %}
+</div>
 
 </div>
 
-
+<!-- ALREADY APPLIED MODAL -->
+<div class="modal-overlay" id="alreadyAppliedModal" onclick="closeModal(event)">
+    <div class="modal-box">
+        <div class="modal-icon" id="modalIcon">
+            <i class="fa-solid fa-circle-check" id="modalIconEl"></i>
+        </div>
+        <h3 id="modalTitle">Already Applied!</h3>
+        <p id="modalMsg">You've already sent your interest for this job. Sit tight — the recruiter will review your application soon.</p>
+        <button class="modal-close" onclick="document.getElementById('alreadyAppliedModal').classList.remove('show')">
+            Got it
+        </button>
+    </div>
 </div>
 
+<!-- INTEREST SENT TOAST CONTAINER -->
+<div class="toast-container" id="toastContainer"></div>
+
+<script>
+// Show popup when already-applied button is clicked
+function showAlreadyApplied(jobTitle, status) {
+    const modal = document.getElementById('alreadyAppliedModal');
+    const icon  = document.getElementById('modalIcon');
+    const iconEl = document.getElementById('modalIconEl');
+    const title = document.getElementById('modalTitle');
+    const msg   = document.getElementById('modalMsg');
+
+    const configs = {
+        pending: {
+            iconClass: 'fa-paper-plane', iconBg: '#eef3e8', iconColor: '#3a6e22',
+            title: 'Already Applied!',
+            msg: `Your interest for <strong>${jobTitle}</strong> has been sent to the recruiter. You'll be notified when they review your application.`
+        },
+        shortlisted: {
+            iconClass: 'fa-star', iconBg: '#eff6ff', iconColor: '#2563eb',
+            title: '⭐ You\'re Shortlisted!',
+            msg: `Great news! The recruiter has shortlisted you for <strong>${jobTitle}</strong>. They may reach out soon.`
+        },
+        accepted: {
+            iconClass: 'fa-circle-check', iconBg: '#eef3e8', iconColor: '#3a6e22',
+            title: '🎉 Application Accepted!',
+            msg: `Congratulations! Your application for <strong>${jobTitle}</strong> was accepted. Check your email for next steps.`
+        },
+        rejected: {
+            iconClass: 'fa-circle-xmark', iconBg: '#fef2f2', iconColor: '#b91c1c',
+            title: 'Not Selected This Time',
+            msg: `Your application for <strong>${jobTitle}</strong> wasn't selected. Don't give up — keep applying to other jobs!`
+        }
+    };
+
+    const c = configs[status] || configs.pending;
+    icon.style.background = c.iconBg;
+    icon.style.borderColor = c.iconBg;
+    iconEl.className = `fa-solid ${c.iconClass}`;
+    iconEl.style.color = c.iconColor;
+    title.textContent = c.title;
+    msg.innerHTML = c.msg;
+
+    modal.classList.add('show');
+}
+
+function closeModal(e) {
+    if (e.target === document.getElementById('alreadyAppliedModal')) {
+        document.getElementById('alreadyAppliedModal').classList.remove('show');
+    }
+}
+
+// On "Send Interest" form submit — show a toast confirmation
+function onInterestSubmit(e, form, jobTitle) {
+    // Let form submit naturally; after page reload toast will show
+    // We use a sessionStorage flag to show the toast after reload
+    sessionStorage.setItem('interestSent', jobTitle);
+}
+
+// Check if we just sent interest (after page reload)
+window.addEventListener('DOMContentLoaded', () => {
+    const sent = sessionStorage.getItem('interestSent');
+    if (sent) {
+        sessionStorage.removeItem('interestSent');
+        showToast(`✓ Interest sent for "${sent}"! The recruiter has been notified.`);
+    }
+
+    // Also check Django messages
+    {% if messages %}
+    {% for message in messages %}
+    showToast("{{ message }}");
+    {% endfor %}
+    {% endif %}
+});
+
+function showToast(msg) {
+    const tc = document.getElementById('toastContainer');
+    const toast = document.createElement('div');
+    toast.className = 'toast';
+    toast.innerHTML = `<i class="fa-solid fa-circle-check" style="color:#8fae74;"></i> ${msg}`;
+    tc.appendChild(toast);
+    setTimeout(() => {
+        toast.style.animation = 'toastOut 0.4s ease forwards';
+        setTimeout(() => toast.remove(), 450);
+    }, 4000);
+}
+
+// ESC to close modal
+document.addEventListener('keydown', e => {
+    if (e.key === 'Escape') document.getElementById('alreadyAppliedModal').classList.remove('show');
+});
+</script>
 {% endblock %}

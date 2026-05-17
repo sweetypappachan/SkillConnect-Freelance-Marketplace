@@ -1,0 +1,237 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}{{ fl_user.get_full_name }} — Freelancer Profile{% endblock %}
+
+{% block extra_head %}
+<style>
+.page-wrapper { padding: 48px 8% 72px; }
+
+.back-link {
+    display: inline-flex; align-items: center; gap: 8px;
+    color: #8fae74; text-decoration: none; font-size: 14px; font-weight: 600;
+    margin-bottom: 28px; transition: gap 0.2s;
+}
+.back-link:hover { gap: 12px; }
+
+.profile-layout {
+    display: grid;
+    grid-template-columns: 320px 1fr;
+    gap: 28px;
+    align-items: start;
+}
+
+/* ── LEFT CARD ── */
+.profile-left {}
+
+.profile-hero-card {
+    background: linear-gradient(135deg, #111 0%, #1c2615 100%);
+    border-radius: 24px; padding: 36px 28px; text-align: center; margin-bottom: 16px;
+    position: relative; overflow: hidden;
+}
+.profile-hero-card::before {
+    content:""; position:absolute; inset:0;
+    background-image: radial-gradient(rgba(143,174,116,0.08) 1px, transparent 1px);
+    background-size: 24px 24px;
+}
+.fl-avatar {
+    width: 80px; height: 80px; border-radius: 22px; margin: 0 auto 16px;
+    background: linear-gradient(135deg, #8fae74, #5a8a42);
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Playfair Display', serif;
+    font-size: 30px; font-weight: 700; color: white;
+    position: relative; z-index: 2;
+}
+.fl-name {
+    font-family: 'Playfair Display', serif;
+    font-size: 22px; font-weight: 700; color: white; margin-bottom: 4px;
+    position: relative; z-index: 2;
+}
+.fl-username { font-size: 13px; color: rgba(255,255,255,0.5); margin-bottom: 16px; position: relative; z-index: 2; }
+
+.fl-contact-btn {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 11px 24px; background: #8fae74; border-radius: 10px;
+    color: white; font-size: 13px; font-weight: 600; text-decoration: none;
+    transition: all 0.2s; position: relative; z-index: 2;
+    font-family: 'Outfit', sans-serif;
+}
+.fl-contact-btn:hover { background: #7a9962; }
+
+.info-card {
+    background: white; border-radius: 20px; padding: 24px;
+    border: 1px solid #ece9e0; margin-bottom: 16px;
+}
+.info-card-title {
+    font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em;
+    color: #aaa; margin-bottom: 14px;
+}
+.info-row {
+    display: flex; align-items: flex-start; gap: 10px;
+    margin-bottom: 10px; font-size: 13.5px; color: #444;
+}
+.info-row:last-child { margin-bottom: 0; }
+.info-row i { color: #8fae74; width: 16px; text-align: center; font-size: 12px; margin-top: 2px; flex-shrink: 0; }
+
+/* ── RIGHT / MAIN ── */
+.profile-right {}
+
+.detail-card {
+    background: white; border-radius: 20px; padding: 28px;
+    border: 1px solid #ece9e0; margin-bottom: 20px;
+}
+.detail-card-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 18px; font-weight: 700; color: #1a1a1a; margin-bottom: 16px;
+    display: flex; align-items: center; gap: 10px;
+}
+.detail-card-title i { color: #8fae74; font-size: 15px; }
+
+.about-text { font-size: 14px; color: #555; line-height: 1.8; font-weight: 300; }
+
+.skill-tags { display: flex; flex-wrap: wrap; gap: 7px; }
+.skill-tag {
+    padding: 5px 14px; border-radius: 40px;
+    background: #eef3e8; border: 1px solid #c5ddb1;
+    font-size: 12px; color: #3a6e22; font-weight: 600;
+}
+
+.exp-text { font-size: 14px; color: #555; line-height: 1.8; white-space: pre-line; }
+
+/* ── APPLICATIONS TABLE ── */
+.app-table { width:100%; border-collapse:collapse; }
+.app-table th {
+    text-align:left; font-size:11px; font-weight:600;
+    text-transform:uppercase; letter-spacing:0.08em; color:#aaa;
+    padding:0 14px 12px; border-bottom:1px solid #ece9e0;
+}
+.app-table td {
+    padding:14px; font-size:13.5px; color:#444;
+    border-bottom:1px solid #f7f5f0; vertical-align:middle;
+}
+.app-table tr:last-child td { border-bottom:none; }
+
+.status-badge {
+    display:inline-flex; align-items:center; gap:5px;
+    padding:4px 10px; border-radius:40px; font-size:11px; font-weight:700;
+}
+.s-pending    { background:#fffbeb; color:#d97706; border:1px solid #fde68a; }
+.s-shortlisted { background:#eff6ff; color:#2563eb; border:1px solid #bfdbfe; }
+.s-accepted   { background:#eef3e8; color:#3a6e22; border:1px solid #c5ddb1; }
+.s-rejected   { background:#fef2f2; color:#b91c1c; border:1px solid #fecaca; }
+
+.cv-btn {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 10px 20px; background: #f7f5f0; border: 1px solid #ece9e0;
+    border-radius: 10px; font-size: 13px; font-weight: 600; color: #444;
+    text-decoration: none; transition: all 0.2s;
+}
+.cv-btn:hover { border-color: #8fae74; color: #8fae74; }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="page-wrapper">
+
+<a href="javascript:history.back()" class="back-link">
+    <i class="fa-solid fa-arrow-left"></i> Back
+</a>
+
+<div class="profile-layout">
+
+    <!-- ── LEFT ── -->
+    <aside>
+        <div class="profile-hero-card">
+            <div class="fl-avatar">{{ fl_user.first_name|first|upper }}{{ fl_user.last_name|first|upper }}</div>
+            <div class="fl-name">{{ fl_user.get_full_name|default:fl_user.username }}</div>
+            <div class="fl-username">@{{ fl_user.username }}</div>
+            <a href="mailto:{{ fl_user.email }}" class="fl-contact-btn">
+                <i class="fa-solid fa-envelope"></i> Send Email
+            </a>
+        </div>
+
+        <div class="info-card">
+            <div class="info-card-title">Contact & Details</div>
+            <div class="info-row">
+                <i class="fa-solid fa-envelope"></i>
+                <span>{{ fl_user.email }}</span>
+            </div>
+            {% if fl_profile.education %}
+            <div class="info-row">
+                <i class="fa-solid fa-graduation-cap"></i>
+                <span>{{ fl_profile.education }}</span>
+            </div>
+            {% endif %}
+            {% if fl_profile.cv %}
+            <div class="info-row" style="margin-top:10px;">
+                <i class="fa-solid fa-file-lines"></i>
+                <a href="{{ fl_profile.cv.url }}" target="_blank" class="cv-btn" style="font-size:12px;padding:7px 14px;">
+                    <i class="fa-solid fa-download" style="font-size:10px;"></i> Download CV
+                </a>
+            </div>
+            {% else %}
+            <div class="info-row">
+                <i class="fa-solid fa-file-lines" style="color:#ddd;"></i>
+                <span style="color:#bbb;font-size:13px;">No CV uploaded</span>
+            </div>
+            {% endif %}
+        </div>
+
+        {% if interests %}
+        <div class="info-card">
+            <div class="info-card-title">Application History (Your Jobs)</div>
+            {% for interest in interests %}
+            <div style="margin-bottom:10px;padding-bottom:10px;border-bottom:1px solid #f7f5f0;">
+                <div style="font-size:13px;font-weight:600;color:#1a1a1a;margin-bottom:4px;">{{ interest.job.title }}</div>
+                <span class="status-badge s-{{ interest.status }}">
+                    {% if interest.status == 'accepted' %}<i class="fa-solid fa-circle-check"></i>
+                    {% elif interest.status == 'rejected' %}<i class="fa-solid fa-circle-xmark"></i>
+                    {% elif interest.status == 'shortlisted' %}<i class="fa-solid fa-star"></i>
+                    {% else %}<i class="fa-solid fa-clock"></i>{% endif %}
+                    {{ interest.get_status_display }}
+                </span>
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+    </aside>
+
+    <!-- ── RIGHT ── -->
+    <main class="profile-right">
+
+        {% if fl_profile.about %}
+        <div class="detail-card">
+            <div class="detail-card-title"><i class="fa-solid fa-user"></i> About</div>
+            <p class="about-text">{{ fl_profile.about }}</p>
+        </div>
+        {% endif %}
+
+        {% if fl_profile.skills %}
+        <div class="detail-card">
+            <div class="detail-card-title"><i class="fa-solid fa-code"></i> Skills</div>
+            <div class="skill-tags">
+                {% for skill in fl_profile.skills.split %}
+                <span class="skill-tag">{{ skill|truncatechars:20 }}</span>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+
+        {% if fl_profile.experience %}
+        <div class="detail-card">
+            <div class="detail-card-title"><i class="fa-solid fa-briefcase"></i> Experience</div>
+            <p class="exp-text">{{ fl_profile.experience }}</p>
+        </div>
+        {% endif %}
+
+        {% if not fl_profile.about and not fl_profile.skills and not fl_profile.experience %}
+        <div class="detail-card" style="text-align:center;padding:60px 20px;">
+            <i class="fa-solid fa-user-slash" style="font-size:40px;color:#ddd;margin-bottom:16px;display:block;"></i>
+            <p style="color:#bbb;font-size:14px;">This freelancer hasn't filled in their profile details yet.</p>
+        </div>
+        {% endif %}
+
+    </main>
+</div>
+
+</div>
+{% endblock %}

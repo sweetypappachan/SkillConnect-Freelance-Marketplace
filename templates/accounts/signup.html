@@ -1,159 +1,230 @@
 {% load static %}
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Register - SkillConnect</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Register — SkillConnect</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;800&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+body {
+    font-family: 'Outfit', sans-serif;
+    min-height: 100vh;
+    background: url("{% static 'images/login.jpg' %}") center/cover no-repeat;
+    position: relative;
+    display: flex; flex-direction: column;
+}
+body::after {
+    content: ""; position: absolute; inset: 0;
+    background: linear-gradient(135deg, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.6) 100%);
+}
+.navbar {
+    position: relative; z-index: 10;
+    padding: 28px 8%;
+    display: flex; justify-content: space-between; align-items: center;
+}
+.navbar-logo { display: flex; align-items: center; gap: 10px; text-decoration: none; }
+.logo-icon { width:34px; height:34px; background:#8fae74; border-radius:9px; display:flex; align-items:center; justify-content:center; }
+.logo-icon i { color:white; font-size:14px; }
+.navbar-logo span { color:white; font-size:20px; font-weight:600; }
+.nav-back { color:rgba(255,255,255,0.7); text-decoration:none; font-size:14px; font-weight:500; display:flex; align-items:center; gap:6px; transition:color 0.2s; }
+.nav-back:hover { color:white; }
 
-    <style>
-        body{
-            margin:0;
-            padding:0;
-            font-family:'Segoe UI', sans-serif;
-            height:100vh;
-            display:flex;
-            justify-content:center;
-            align-items:center;
-            background: url("{% static 'images/login.jpg' %}") no-repeat center center/cover;
-        }
+.auth-wrapper {
+    position: relative; z-index: 2; flex: 1;
+    display: flex; align-items: center; justify-content: center;
+    padding: 32px 20px;
+}
+.auth-card {
+    width:100%; max-width:480px;
+    background: rgba(255,255,255,0.07);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255,255,255,0.13);
+    border-radius: 28px;
+    padding: 44px 44px;
+    animation: slideUp 0.5s ease both;
+}
+@keyframes slideUp { from{opacity:0;transform:translateY(24px);} to{opacity:1;transform:translateY(0);} }
 
-        body::before{
-            content:"";
-            position:absolute;
-            width:100%;
-            height:100%;
-            background:rgba(0,0,0,0.5);
-            backdrop-filter: blur(4px);
-        }
+.auth-icon { width:56px; height:56px; background:rgba(143,174,116,0.18); border:1px solid rgba(143,174,116,0.3); border-radius:16px; display:flex; align-items:center; justify-content:center; margin-bottom:20px; }
+.auth-icon i { color:#b5d49a; font-size:22px; }
 
-        .container{
-            position:relative;
-            z-index:2;
-            width:450px;
-            padding:40px;
-            border-radius:20px;
-            background: rgba(255,255,255,0.15);
-            backdrop-filter: blur(15px);
-            box-shadow: 0 8px 32px rgba(0,0,0,0.3);
-            color:white;
-        }
+.auth-card h1 { font-family:'Playfair Display',serif; font-size:28px; font-weight:800; color:white; margin-bottom:4px; }
+.auth-card .subtitle { color:rgba(255,255,255,0.5); font-size:14px; font-weight:300; margin-bottom:28px; }
 
-        h2{
-            text-align:center;
-            margin-bottom:25px;
-            letter-spacing:1px;
-        }
+/* Type toggle */
+.type-toggle {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 10px;
+    margin-bottom: 24px;
+}
+.type-option { display: none; }
+.type-label {
+    display: flex; align-items: center; gap: 10px;
+    padding: 14px 16px;
+    background: rgba(255,255,255,0.07);
+    border: 1.5px solid rgba(255,255,255,0.12);
+    border-radius: 12px;
+    cursor: pointer; transition: all 0.2s;
+    color: rgba(255,255,255,0.6); font-size: 14px; font-weight: 500;
+}
+.type-label i { font-size: 16px; }
+.type-option:checked + .type-label {
+    background: rgba(143,174,116,0.2);
+    border-color: #8fae74;
+    color: #b5d49a;
+}
 
-        label{
-            display:block;
-            margin-top:12px;
-            font-size:14px;
-        }
+.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.form-group { margin-bottom: 16px; }
+.form-group label { display:block; font-size:11px; font-weight:600; text-transform:uppercase; letter-spacing:0.08em; color:rgba(255,255,255,0.45); margin-bottom:7px; }
+.input-wrap { position:relative; }
+.input-wrap i { position:absolute; left:14px; top:50%; transform:translateY(-50%); color:rgba(255,255,255,0.3); font-size:13px; }
+.input-wrap input, .input-wrap select {
+    width:100%; padding:13px 14px 13px 38px;
+    background:rgba(255,255,255,0.08);
+    border:1px solid rgba(255,255,255,0.13); border-radius:11px;
+    color:white; font-size:14px; font-weight:400; outline:none;
+    transition:all 0.2s; font-family:'Outfit',sans-serif;
+}
+.input-wrap input::placeholder { color:rgba(255,255,255,0.28); }
+.input-wrap input:focus, .input-wrap select:focus { background:rgba(255,255,255,0.12); border-color:rgba(143,174,116,0.55); box-shadow:0 0 0 3px rgba(143,174,116,0.1); }
+.input-wrap select { appearance:none; cursor:pointer; }
+.input-wrap select option { color:black; background:white; }
 
-        input, select{
-            width:100%;
-            padding:10px;
-            margin-top:5px;
-            border:none;
-            border-bottom:2px solid rgba(255,255,255,0.6);
-            background:transparent;
-            color:white;
-            font-size:14px;
-            outline:none;
-        }
+.btn-submit {
+    width:100%; margin-top:6px; padding:15px;
+    background:#8fae74; border:none; border-radius:12px;
+    color:white; font-size:15px; font-weight:600;
+    font-family:'Outfit',sans-serif;
+    cursor:pointer; transition:all 0.25s;
+    display:flex; align-items:center; justify-content:center; gap:8px;
+}
+.btn-submit:hover { background:#7a9962; transform:translateY(-2px); box-shadow:0 10px 28px rgba(143,174,116,0.4); }
 
-        select option{
-            color:black;
-        }
+.auth-footer { text-align:center; margin-top:24px; font-size:14px; color:rgba(255,255,255,0.45); }
+.auth-footer a { color:#b5d49a; text-decoration:none; font-weight:600; }
+.auth-footer a:hover { color:#8fae74; }
 
-        input::placeholder{
-            color:rgba(255,255,255,0.7);
-        }
+.error-msg { background:rgba(239,68,68,0.15); border:1px solid rgba(239,68,68,0.3); color:#fca5a5; padding:12px 16px; border-radius:10px; font-size:13px; margin-bottom:16px; display:flex; align-items:center; gap:8px; }
 
-        button{
-            width:100%;
-            padding:12px;
-            margin-top:25px;
-            border:none;
-            border-radius:25px;
-            background: linear-gradient(90deg,#4facfe,#00f2fe);
-            color:white;
-            font-size:16px;
-            cursor:pointer;
-            transition:0.3s;
-        }
-
-        button:hover{
-            transform:scale(1.05);
-            box-shadow:0 5px 20px rgba(0,0,0,0.3);
-        }
-
-        .error{
-            color:#ff6b6b;
-            font-size:13px;
-            margin-bottom:10px;
-        }
-
-        .back-link{
-            text-align:center;
-            margin-top:20px;
-            font-size:14px;
-        }
-
-        .back-link a{
-            color:#00f2fe;
-            text-decoration:none;
-            font-weight:bold;
-        }
-    </style>
+.section-label {
+    font-size: 11px; font-weight: 600; text-transform: uppercase;
+    letter-spacing: 0.08em; color: rgba(255,255,255,0.3);
+    margin-bottom: 14px; margin-top: 4px;
+    display: flex; align-items: center; gap: 8px;
+}
+.section-label::after { content:""; flex:1; height:1px; background:rgba(255,255,255,0.1); }
+</style>
 </head>
-
 <body>
 
-<div class="container">
+<nav class="navbar">
+    <a href="{% url 'home' %}" class="navbar-logo">
+        <div class="logo-icon"><i class="fa-solid fa-bolt"></i></div>
+        <span>SkillConnect</span>
+    </a>
+    <a href="{% url 'login' %}" class="nav-back">
+        <i class="fa-solid fa-arrow-left" style="font-size:12px"></i> Sign In Instead
+    </a>
+</nav>
 
-    <h2>CREATE ACCOUNT</h2>
+<div class="auth-wrapper">
+    <div class="auth-card">
 
-    {% if messages %}
-        {% for message in messages %}
-            <p class="error">{{ message }}</p>
-        {% endfor %}
-    {% endif %}
+        <div class="auth-icon"><i class="fa-solid fa-user-plus"></i></div>
 
-    <form method="POST" action="{% url 'signup' %}">
-        {% csrf_token %}
+        <h1>Create Account</h1>
+        <p class="subtitle">Join thousands of professionals on SkillConnect</p>
 
-        <label>Account Type</label>
-        <select name="user_type" required>
-            <option value="">-- Select Account Type --</option>
-            <option value="freelancer">Freelancer</option>
-            <option value="recruiter">Recruiter</option>
-        </select>
+        {% if messages %}
+            {% for message in messages %}
+                <div class="error-msg">
+                    <i class="fa-solid fa-circle-exclamation"></i> {{ message }}
+                </div>
+            {% endfor %}
+        {% endif %}
 
-        <label>First Name</label>
-        <input type="text" name="first_name" required>
+        <form method="POST" action="{% url 'signup' %}">
+            {% csrf_token %}
 
-        <label>Last Name</label>
-        <input type="text" name="last_name" required>
+            <!-- Account Type -->
+            <div class="section-label">I am a</div>
+            <div class="type-toggle" style="margin-bottom:24px;">
+                <input type="radio" name="user_type" value="freelancer" id="type-freelancer" class="type-option" required>
+                <label for="type-freelancer" class="type-label">
+                    <i class="fa-solid fa-laptop-code"></i> Freelancer
+                </label>
+                <input type="radio" name="user_type" value="recruiter" id="type-recruiter" class="type-option">
+                <label for="type-recruiter" class="type-label">
+                    <i class="fa-solid fa-building"></i> Recruiter
+                </label>
+            </div>
 
-        <label>Username</label>
-        <input type="text" name="username" required>
+            <div class="section-label">Personal Info</div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>First Name</label>
+                    <div class="input-wrap">
+                        <i class="fa-solid fa-user"></i>
+                        <input type="text" name="first_name" placeholder="John" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Last Name</label>
+                    <div class="input-wrap">
+                        <i class="fa-solid fa-user"></i>
+                        <input type="text" name="last_name" placeholder="Doe" required>
+                    </div>
+                </div>
+            </div>
 
-        <label>Email</label>
-        <input type="email" name="email" required>
+            <div class="form-group">
+                <label>Username</label>
+                <div class="input-wrap">
+                    <i class="fa-solid fa-at"></i>
+                    <input type="text" name="username" placeholder="johndoe123" required>
+                </div>
+            </div>
 
-        <label>Password</label>
-        <input type="password" name="password" required>
+            <div class="form-group">
+                <label>Email Address</label>
+                <div class="input-wrap">
+                    <i class="fa-solid fa-envelope"></i>
+                    <input type="email" name="email" placeholder="john@example.com" required>
+                </div>
+            </div>
 
-        <label>Confirm Password</label>
-        <input type="password" name="confirm_password" required>
+            <div class="section-label">Security</div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Password</label>
+                    <div class="input-wrap">
+                        <i class="fa-solid fa-lock"></i>
+                        <input type="password" name="password" placeholder="••••••••" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Confirm Password</label>
+                    <div class="input-wrap">
+                        <i class="fa-solid fa-lock"></i>
+                        <input type="password" name="confirm_password" placeholder="••••••••" required>
+                    </div>
+                </div>
+            </div>
 
-        <button type="submit">Register</button>
-    </form>
+            <button type="submit" class="btn-submit">
+                Create Account <i class="fa-solid fa-arrow-right" style="font-size:12px"></i>
+            </button>
+        </form>
 
-    <div class="back-link">
-        Already have an account? <a href="{% url 'login' %}">Login</a>
+        <div class="auth-footer">
+            Already have an account? <a href="{% url 'login' %}">Sign In</a>
+        </div>
+
     </div>
-
 </div>
 
 </body>

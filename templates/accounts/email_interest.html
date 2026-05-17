@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>SkillConnect</title>
+</head>
+
+<body style="margin:0;padding:0;background-color:#f7f5f0;font-family:Arial,Helvetica,sans-serif;">
+
+<table width="100%" cellpadding="0" cellspacing="0" style="padding:30px 0;">
+<tr>
+<td align="center">
+
+<!-- MAIN CARD -->
+<table width="600" cellpadding="0" cellspacing="0" 
+style="background:#ffffff;border-radius:12px;overflow:hidden;
+border:1px solid #ece9e0;box-shadow:0 4px 20px rgba(0,0,0,0.05);">
+
+    <!-- HEADER -->
+    <tr>
+        <td style="background:#111111;color:#8fae74;
+        text-align:center;padding:16px;font-size:20px;font-weight:600;">
+            SkillConnect
+        </td>
+    </tr>
+
+    <!-- CONTENT -->
+    <tr>
+        <td style="padding:28px;">
+
+            <div style="font-size:18px;font-weight:600;color:#1a1a1a;margin-bottom:10px;">
+                New Interest Received 🎉
+            </div>
+
+            <div style="margin-bottom:12px;color:#1a1a1a;">
+                Hello {{ job.recruiter.username }},
+            </div>
+
+            <div style="margin-bottom:20px;color:#777;font-size:14px;">
+                You have received a new interest for your job posting.
+            </div>
+
+            <!-- INNER BOX -->
+            <table width="100%" cellpadding="0" cellspacing="0" 
+            style="background:#f7f5f0;border:1px solid #ece9e0;
+            border-radius:10px;padding:16px;">
+
+                <tr>
+                    <td style="padding-bottom:10px;font-size:14px;color:#333;">
+                        <strong>Job Title:</strong> {{ job.title }}
+                    </td>
+                </tr>
+
+                <tr>
+                    <td style="padding-bottom:10px;font-size:14px;color:#333;">
+                        <strong>Job Description:</strong> {{ job.description }}
+                    </td>
+                </tr>
+
+                <tr>
+                    <td style="padding-bottom:10px;font-size:14px;color:#333;">
+                        <strong>Freelancer:</strong> {{ freelancer.username }}
+                    </td>
+                </tr>
+
+                <tr>
+                    <td style="font-size:14px;color:#333;">
+                        <strong>Email:</strong> {{ freelancer.email }}
+                    </td>
+                </tr>
+
+            </table>
+
+            <!-- BUTTON -->
+            <div style="text-align:center;margin-top:25px;">
+                <a href="http://127.0.0.1:8000/recruiter/dashboard/"
+                style="background:#8fae74;color:#ffffff;
+                padding:12px 28px;text-decoration:none;
+                border-radius:30px;font-weight:600;font-size:14px;
+                display:inline-block;">
+                    View Dashboard
+                </a>
+            </div>
+
+        </td>
+    </tr>
+
+    <!-- FOOTER -->
+    <tr>
+        <td style="text-align:center;font-size:12px;color:#777;
+        padding:16px;border-top:1px solid #ece9e0;">
+            © 2026 SkillConnect — Connecting Talent with Opportunity
+        </td>
+    </tr>
+
+</table>
+
+</td>
+</tr>
+</table>
+
+</body>
+</html>

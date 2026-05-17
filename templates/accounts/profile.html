@@ -1,39 +1,500 @@
 {% extends "base.html" %}
+{% load static %}
+{% block title %}My Profile — SkillConnect{% endblock %}
+
+{% block extra_head %}
+<style>
+.page-wrapper { padding: 48px 8% 72px; }
+
+.profile-layout {
+    display: grid;
+    grid-template-columns: 280px 1fr;
+    gap: 28px;
+    align-items: start;
+}
+
+/* ── SIDEBAR ── */
+.profile-sidebar {
+    position: sticky; top: 92px;
+}
+.sidebar-card {
+    background: white; border-radius: 24px; padding: 32px 24px;
+    border: 1px solid #ece9e0; text-align: center; margin-bottom: 16px;
+}
+.avatar-circle {
+    width: 80px; height: 80px; border-radius: 24px; margin: 0 auto 16px;
+    background: linear-gradient(135deg, #8fae74, #5a8a42);
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Playfair Display', serif;
+    font-size: 30px; font-weight: 700; color: white;
+}
+.profile-name {
+    font-family: 'Playfair Display', serif;
+    font-size: 20px; font-weight: 700; color: #1a1a1a; margin-bottom: 4px;
+}
+.profile-email { font-size: 13px; color: #999; margin-bottom: 12px; }
+.profile-type-badge {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 5px 14px; border-radius: 40px;
+    font-size: 12px; font-weight: 600;
+}
+.type-freelancer { background: #eef3e8; color: #3a6e22; }
+.type-recruiter  { background: #eff6ff; color: #1d4ed8; }
+
+.complete-bar-wrap { margin-top: 20px; text-align: left; }
+.complete-bar-label { font-size: 12px; color: #999; margin-bottom: 6px; display: flex; justify-content: space-between; }
+.complete-bar-track { height: 6px; background: #f0ede6; border-radius: 4px; overflow: hidden; }
+.complete-bar-fill  { height: 100%; background: #8fae74; border-radius: 4px; transition: width 0.6s ease; }
+
+.nav-tabs-vertical { display: flex; flex-direction: column; gap: 4px; }
+.nav-tab-v {
+    display: flex; align-items: center; gap: 10px;
+    padding: 12px 16px; border-radius: 12px;
+    font-size: 14px; font-weight: 500; color: #666;
+    cursor: pointer; transition: all 0.2s; border: none;
+    background: transparent; font-family: 'Outfit', sans-serif;
+    text-align: left; width: 100%;
+}
+.nav-tab-v:hover { background: #f7f5f0; color: #1a1a1a; }
+.nav-tab-v.active { background: #eef3e8; color: #3a6e22; font-weight: 600; }
+.nav-tab-v i { width: 18px; text-align: center; font-size: 13px; }
+
+/* ── MAIN PANEL ── */
+.profile-main {}
+
+.tab-panel { display: none; }
+.tab-panel.active { display: block; }
+
+.panel-card {
+    background: white; border-radius: 24px; padding: 36px;
+    border: 1px solid #ece9e0; margin-bottom: 24px;
+}
+.panel-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 22px; font-weight: 700; color: #1a1a1a; margin-bottom: 4px;
+}
+.panel-sub { font-size: 14px; color: #999; margin-bottom: 28px; }
+
+.form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+.form-grid.full { grid-template-columns: 1fr; }
+
+.form-group { display: flex; flex-direction: column; gap: 7px; }
+.form-group label {
+    font-size: 12px; font-weight: 600; color: #888;
+    text-transform: uppercase; letter-spacing: 0.06em;
+}
+.form-group input,
+.form-group textarea,
+.form-group select {
+    padding: 13px 16px;
+    border: 1.5px solid #ece9e0; border-radius: 12px;
+    font-size: 14px; color: #1a1a1a; outline: none;
+    font-family: 'Outfit', sans-serif;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    background: white;
+}
+.form-group input:focus,
+.form-group textarea:focus {
+    border-color: #8fae74;
+    box-shadow: 0 0 0 3px rgba(143,174,116,0.12);
+}
+.form-group textarea { resize: vertical; min-height: 100px; }
+
+.file-upload-wrap {
+    display: flex; align-items: center; gap: 12px;
+    padding: 12px 16px; border: 1.5px dashed #d4cfca;
+    border-radius: 12px; cursor: pointer; transition: border-color 0.2s;
+}
+.file-upload-wrap:hover { border-color: #8fae74; }
+.file-upload-wrap i { color: #8fae74; font-size: 16px; }
+.file-upload-text { font-size: 13px; color: #888; }
+.file-upload-text span { color: #8fae74; font-weight: 600; }
+
+.save-btn {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 13px 32px; background: #8fae74; border: none;
+    border-radius: 12px; color: white; font-size: 14px; font-weight: 600;
+    cursor: pointer; font-family: 'Outfit', sans-serif; transition: all 0.25s;
+    margin-top: 8px;
+}
+.save-btn:hover { background: #7a9962; transform: translateY(-2px); box-shadow: 0 8px 24px rgba(143,174,116,0.35); }
+.save-btn:active { transform: scale(0.98); }
+
+/* ── NOTIFICATION LIST ── */
+.notif-full-list { display: flex; flex-direction: column; gap: 0; }
+.nfl-item {
+    display: flex; gap: 14px; padding: 16px 0;
+    border-bottom: 1px solid #f7f5f0;
+}
+.nfl-item:last-child { border-bottom: none; }
+.nfl-item.unread { background: #f9faf6; border-radius: 12px; padding: 16px 12px; margin: 0 -12px; }
+
+.nfl-icon {
+    width: 40px; height: 40px; border-radius: 12px; flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center; font-size: 14px;
+}
+.nfl-body { flex: 1; }
+.nfl-title { font-size: 14px; font-weight: 600; color: #1a1a1a; margin-bottom: 3px; }
+.nfl-msg   { font-size: 13px; color: #666; line-height: 1.6; }
+.nfl-time  { font-size: 11px; color: #bbb; margin-top: 5px; }
+.nfl-dot   { width: 8px; height: 8px; border-radius: 50%; background: #8fae74; flex-shrink: 0; margin-top: 6px; }
+
+.empty-notif {
+    text-align: center; padding: 60px 20px;
+}
+.empty-notif i { font-size: 40px; color: #ddd; display: block; margin-bottom: 12px; }
+.empty-notif p { color: #bbb; font-size: 14px; }
+
+/* ── CV DISPLAY ── */
+.cv-current {
+    display: flex; align-items: center; gap: 10px;
+    padding: 12px 16px; background: #f7f5f0; border-radius: 12px;
+    font-size: 13px; color: #555; margin-bottom: 12px;
+}
+.cv-current i { color: #8fae74; }
+.cv-current a { color: #8fae74; font-weight: 600; text-decoration: none; }
+.cv-current a:hover { text-decoration: underline; }
+
+/* ── PASSWORD STRENGTH ── */
+.pw-strength { margin-top: 6px; height: 4px; border-radius: 4px; background: #f0ede6; overflow: hidden; }
+.pw-strength-bar { height: 100%; border-radius: 4px; width: 0; transition: width 0.3s, background 0.3s; }
+</style>
+{% endblock %}
 
 {% block content %}
+<div class="page-wrapper">
 
-<h2>My Profile</h2>
+<div class="profile-layout">
 
-<hr>
+    <!-- ── SIDEBAR ── -->
+    <aside class="profile-sidebar">
+        <div class="sidebar-card">
+            <div class="avatar-circle">{{ request.user.first_name|first|upper }}{{ request.user.last_name|first|upper }}</div>
+            <div class="profile-name">{{ request.user.get_full_name|default:request.user.username }}</div>
+            <div class="profile-email">{{ request.user.email }}</div>
+            <span class="profile-type-badge {% if profile.user_type == 'freelancer' %}type-freelancer{% else %}type-recruiter{% endif %}">
+                <i class="fa-solid {% if profile.user_type == 'freelancer' %}fa-laptop-code{% else %}fa-building{% endif %}" style="font-size:10px;"></i>
+                {{ profile.get_user_type_display }}
+            </span>
+            <div class="complete-bar-wrap">
+                <div class="complete-bar-label">
+                    <span>Profile completeness</span>
+                    <span>{% if profile.is_complete %}100%{% else %}Incomplete{% endif %}</span>
+                </div>
+                <div class="complete-bar-track">
+                    <div class="complete-bar-fill" style="width:{% if profile.is_complete %}100{% else %}40{% endif %}%;"></div>
+                </div>
+            </div>
+        </div>
 
-<p><strong>Username:</strong> {{ request.user.username }}</p>
-<p><strong>Email:</strong> {{ request.user.email }}</p>
-<p><strong>User Type:</strong> {{ profile.user_type }}</p>
+        <div class="sidebar-card" style="padding:12px;">
+            <nav class="nav-tabs-vertical">
+                <button class="nav-tab-v active" onclick="switchTab('info', this)">
+                    <i class="fa-solid fa-user"></i> Personal Info
+                </button>
+                {% if profile.user_type == 'freelancer' %}
+                <button class="nav-tab-v" onclick="switchTab('skills', this)">
+                    <i class="fa-solid fa-code"></i> Skills & CV
+                </button>
+                {% else %}
+                <button class="nav-tab-v" onclick="switchTab('company', this)">
+                    <i class="fa-solid fa-building"></i> Company Info
+                </button>
+                {% endif %}
+                <button class="nav-tab-v" onclick="switchTab('password', this)">
+                    <i class="fa-solid fa-lock"></i> Change Password
+                </button>
+                <button class="nav-tab-v" onclick="switchTab('notifications', this)" id="notifTabBtn">
+                    <i class="fa-solid fa-bell"></i> Notifications
+                    {% if unread_count > 0 %}
+                    <span style="margin-left:auto;background:#ef4444;color:white;font-size:10px;font-weight:700;padding:2px 7px;border-radius:40px;">{{ unread_count }}</span>
+                    {% endif %}
+                </button>
+            </nav>
+        </div>
+    </aside>
 
-{% if profile.user_type == "freelancer" %}
+    <!-- ── MAIN PANEL ── -->
+    <main class="profile-main">
 
-<h3>Freelancer Details</h3>
+        <!-- TAB: Personal Info -->
+        <div class="tab-panel active" id="tab-info">
+            <div class="panel-card">
+                <div class="panel-title">Personal Information</div>
+                <div class="panel-sub">Update your name and email address.</div>
 
-<p><strong>Education:</strong> {{ profile.education }}</p>
-<p><strong>Skills:</strong> {{ profile.skills }}</p>
-<p><strong>Experience:</strong> {{ profile.experience }}</p>
+                <form method="POST" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <input type="hidden" name="action" value="update_info">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>First Name</label>
+                            <input type="text" name="first_name" value="{{ request.user.first_name }}" placeholder="First name">
+                        </div>
+                        <div class="form-group">
+                            <label>Last Name</label>
+                            <input type="text" name="last_name" value="{{ request.user.last_name }}" placeholder="Last name">
+                        </div>
+                        <div class="form-group" style="grid-column:1/-1;">
+                            <label>Email Address</label>
+                            <input type="email" name="email" value="{{ request.user.email }}" placeholder="your@email.com">
+                        </div>
+                    </div>
+                    <button type="submit" class="save-btn">
+                        <i class="fa-solid fa-floppy-disk"></i> Save Changes
+                    </button>
+                </form>
+            </div>
+        </div>
 
-{% if profile.cv %}
-<p>
-<strong>CV:</strong>
-<a href="{{ profile.cv.url }}" target="_blank">Download CV</a>
-</p>
-{% endif %}
+        <!-- TAB: Skills & CV (Freelancer) -->
+        {% if profile.user_type == 'freelancer' %}
+        <div class="tab-panel" id="tab-skills">
+            <div class="panel-card">
+                <div class="panel-title">Skills, Experience & CV</div>
+                <div class="panel-sub">Keep your professional details up to date.</div>
 
-{% endif %}
+                <form method="POST" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <input type="hidden" name="action" value="update_info">
+                    <div class="form-grid full" style="gap:20px;">
+                        <div class="form-group">
+                            <label>Education</label>
+                            <input type="text" name="education" value="{{ profile.education|default:'' }}" placeholder="e.g. B.Tech Computer Science, XYZ University">
+                        </div>
+                        <div class="form-group">
+                            <label>Skills (comma or space separated)</label>
+                            <input type="text" name="skills" value="{{ profile.skills|default:'' }}" placeholder="e.g. Python, Django, React, Node.js">
+                        </div>
+                        <div class="form-group">
+                            <label>Experience</label>
+                            <textarea name="experience" placeholder="Describe your work experience...">{{ profile.experience|default:'' }}</textarea>
+                        </div>
+                        <div class="form-group">
+                            <label>About / Bio</label>
+                            <textarea name="about" placeholder="A short bio visible to recruiters...">{{ profile.about|default:'' }}</textarea>
+                        </div>
+                        <div class="form-group">
+                            <label>Upload CV (PDF)</label>
+                            {% if profile.cv %}
+                            <div class="cv-current">
+                                <i class="fa-solid fa-file-lines"></i>
+                                Current CV: <a href="{{ profile.cv.url }}" target="_blank">View / Download</a>
+                            </div>
+                            {% endif %}
+                            <label class="file-upload-wrap" for="cvFile">
+                                <i class="fa-solid fa-cloud-arrow-up"></i>
+                                <span class="file-upload-text">
+                                    <span>Click to upload</span> or drag and drop your CV (PDF)
+                                </span>
+                                <input type="file" name="cv" id="cvFile" accept=".pdf,.doc,.docx" style="display:none;" onchange="updateFileLabel(this)">
+                            </label>
+                            <span id="fileLabel" style="font-size:12px;color:#8fae74;margin-top:4px;"></span>
+                        </div>
+                    </div>
+                    <button type="submit" class="save-btn">
+                        <i class="fa-solid fa-floppy-disk"></i> Save Changes
+                    </button>
+                </form>
+            </div>
+        </div>
+        {% endif %}
 
+        <!-- TAB: Company Info (Recruiter) -->
+        {% if profile.user_type == 'recruiter' %}
+        <div class="tab-panel" id="tab-company">
+            <div class="panel-card">
+                <div class="panel-title">Company Information</div>
+                <div class="panel-sub">Details visible to freelancers on your profile.</div>
 
-{% if profile.user_type == "recruiter" %}
+                <form method="POST">
+                    {% csrf_token %}
+                    <input type="hidden" name="action" value="update_info">
+                    <div class="form-grid full" style="gap:20px;">
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label>Company Name</label>
+                                <input type="text" name="company_name" value="{{ profile.company_name|default:'' }}" placeholder="Your company name">
+                            </div>
+                            <div class="form-group">
+                                <label>Location</label>
+                                <input type="text" name="company_location" value="{{ profile.company_location|default:'' }}" placeholder="e.g. Bangalore, India">
+                            </div>
+                            <div class="form-group" style="grid-column:1/-1;">
+                                <label>Company Website</label>
+                                <input type="url" name="company_website" value="{{ profile.company_website|default:'' }}" placeholder="https://yourcompany.com">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>About the Company</label>
+                            <textarea name="company_about" placeholder="Tell freelancers about your company...">{{ profile.company_about|default:'' }}</textarea>
+                        </div>
+                        <div class="form-group">
+                            <label>Hiring Domains / Skills You Look For</label>
+                            <input type="text" name="recruiter_skills" value="{{ profile.recruiter_skills|default:'' }}" placeholder="e.g. Python, React, DevOps, UI/UX">
+                        </div>
+                    </div>
+                    <button type="submit" class="save-btn">
+                        <i class="fa-solid fa-floppy-disk"></i> Save Changes
+                    </button>
+                </form>
+            </div>
+        </div>
+        {% endif %}
 
-<h3>Recruiter Details</h3>
+        <!-- TAB: Change Password -->
+        <div class="tab-panel" id="tab-password">
+            <div class="panel-card">
+                <div class="panel-title">Change Password</div>
+                <div class="panel-sub">Make sure your new password is at least 6 characters long.</div>
 
-<p><strong>Company Name:</strong> {{ profile.company_name }}</p>
+                <form method="POST" id="pwForm">
+                    {% csrf_token %}
+                    <input type="hidden" name="action" value="change_password">
+                    <div class="form-grid full" style="gap:20px;">
+                        <div class="form-group">
+                            <label>Current Password</label>
+                            <input type="password" name="old_password" placeholder="Enter current password" autocomplete="current-password">
+                        </div>
+                        <div class="form-group">
+                            <label>New Password</label>
+                            <input type="password" name="new_password" id="newPw" placeholder="Enter new password" autocomplete="new-password" oninput="checkStrength(this.value)">
+                            <div class="pw-strength"><div class="pw-strength-bar" id="strengthBar"></div></div>
+                        </div>
+                        <div class="form-group">
+                            <label>Confirm New Password</label>
+                            <input type="password" name="confirm_password" id="confirmPw" placeholder="Confirm new password" autocomplete="new-password">
+                        </div>
+                    </div>
+                    <button type="submit" class="save-btn">
+                        <i class="fa-solid fa-lock"></i> Update Password
+                    </button>
+                </form>
+            </div>
+        </div>
 
-{% endif %}
+        <!-- TAB: Notifications -->
+        <div class="tab-panel" id="tab-notifications">
+            <div class="panel-card">
+                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">
+                    <div class="panel-title">Notifications</div>
+                    {% if unread_count > 0 %}
+                    <a href="{% url 'mark_notifications_read' %}" style="font-size:13px;color:#8fae74;font-weight:600;text-decoration:none;" onclick="markReadAjax(event)">
+                        Mark all as read
+                    </a>
+                    {% endif %}
+                </div>
+                <div class="panel-sub">All your activity notifications in one place.</div>
 
+                <div class="notif-full-list">
+                    {% for notif in notifications %}
+                    <div class="nfl-item {% if not notif.is_read %}unread{% endif %}">
+                        <div class="nfl-icon
+                            {% if notif.notif_type == 'shortlisted' %}ni-shortlisted
+                            {% elif notif.notif_type == 'accepted' %}ni-accepted
+                            {% elif notif.notif_type == 'rejected' %}ni-rejected
+                            {% elif notif.notif_type == 'new_interest' %}ni-interest
+                            {% elif notif.notif_type == 'interest_sent' %}ni-sent
+                            {% else %}ni-default{% endif %}"
+                            style="width:40px;height:40px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;">
+                            <i class="fa-solid
+                                {% if notif.notif_type == 'shortlisted' %}fa-star
+                                {% elif notif.notif_type == 'accepted' %}fa-circle-check
+                                {% elif notif.notif_type == 'rejected' %}fa-circle-xmark
+                                {% elif notif.notif_type == 'new_interest' %}fa-user-plus
+                                {% elif notif.notif_type == 'interest_sent' %}fa-paper-plane
+                                {% else %}fa-bell{% endif %}"></i>
+                        </div>
+                        <div class="nfl-body">
+                            <div class="nfl-title">{{ notif.title }}</div>
+                            <div class="nfl-msg">{{ notif.message }}</div>
+                            <div class="nfl-time">{{ notif.created_at|date:"d M Y · h:i A" }} · {{ notif.created_at|timesince }} ago</div>
+                        </div>
+                        {% if not notif.is_read %}<div class="nfl-dot"></div>{% endif %}
+                    </div>
+                    {% empty %}
+                    <div class="empty-notif">
+                        <i class="fa-regular fa-bell"></i>
+                        <p>You have no notifications yet. They'll appear here when recruiters respond to your applications.</p>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+
+    </main>
+</div>
+</div>
+
+<script>
+// ── Tab switching ──
+function switchTab(name, btn) {
+    document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.nav-tab-v').forEach(b => b.classList.remove('active'));
+    document.getElementById('tab-' + name).classList.add('active');
+    btn.classList.add('active');
+}
+
+// ── Open notifications tab if hash is present ──
+if (window.location.hash === '#notifications') {
+    const btn = document.getElementById('notifTabBtn');
+    if (btn) switchTab('notifications', btn);
+}
+
+// ── Password strength indicator ──
+function checkStrength(val) {
+    const bar = document.getElementById('strengthBar');
+    let score = 0;
+    if (val.length >= 6)  score++;
+    if (val.length >= 10) score++;
+    if (/[A-Z]/.test(val)) score++;
+    if (/[0-9]/.test(val)) score++;
+    if (/[^A-Za-z0-9]/.test(val)) score++;
+    const widths  = ['0%', '20%', '40%', '60%', '80%', '100%'];
+    const colors  = ['#f0ede6', '#ef4444', '#f59e0b', '#3b82f6', '#8fae74', '#16a34a'];
+    bar.style.width      = widths[score];
+    bar.style.background = colors[score];
+}
+
+// ── Update file upload label ──
+function updateFileLabel(input) {
+    const label = document.getElementById('fileLabel');
+    if (input.files && input.files[0]) {
+        label.textContent = '✓ ' + input.files[0].name;
+    }
+}
+
+// ── Mark all read via AJAX ──
+function markReadAjax(e) {
+    e.preventDefault();
+    fetch("{% url 'mark_notifications_read' %}", {
+        method: 'POST',
+        headers: {
+            'X-CSRFToken': '{{ csrf_token }}',
+            'X-Requested-With': 'XMLHttpRequest',
+        }
+    }).then(() => {
+        document.querySelectorAll('.nfl-item.unread').forEach(el => el.classList.remove('unread'));
+        document.querySelectorAll('.nfl-dot').forEach(el => el.remove());
+        e.target.style.display = 'none';
+    });
+}
+
+// ── Smooth save feedback ──
+document.querySelectorAll('.save-btn').forEach(btn => {
+    btn.closest('form').addEventListener('submit', function() {
+        btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Saving…';
+        btn.disabled = true;
+    });
+});
+</script>
+
+<style>
+.ni-shortlisted { background:#eff6ff; color:#2563eb; }
+.ni-accepted    { background:#eef3e8; color:#3a6e22; }
+.ni-rejected    { background:#fef2f2; color:#b91c1c; }
+.ni-interest    { background:#f5f3ff; color:#7c3aed; }
+.ni-sent        { background:#eef3e8; color:#6a9050; }
+.ni-default     { background:#f7f5f0; color:#888; }
+</style>
 {% endblock %}
