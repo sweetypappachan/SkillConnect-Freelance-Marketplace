@@ -8,6 +8,9 @@ from django.db.models import Q, Count
 from django.core.mail import send_mail
 from django.conf import settings
 from django.http import JsonResponse
+from django.core.exceptions import ImproperlyConfigured
+
+import threading
 
 from .models import Profile, Job, JobApplication, JobInterest, Notification
 from .forms import ProfileForm, FreelancerProfileForm, RecruiterProfileForm, JobForm, JobApplicationForm, JobInterestForm
@@ -293,7 +296,8 @@ def send_interest(request, job_id):
                     [job.recruiter.email],
                 )
                 email.attach_alternative(html_content, "text/html")
-                email.send()
+                send_email_async(email)
+
             except Exception:
                 pass
 
@@ -500,7 +504,7 @@ border:1px solid #ece9e0;box-shadow:0 4px 20px rgba(0,0,0,0.05);">
                 to         = [freelancer.email],
             )
             email.attach_alternative(html_content, "text/html")
-            email.send(fail_silently=True)
+            send_email_async(email)
 
         label_map = {'shortlisted': 'Shortlisted', 'accepted': 'Accepted', 'rejected': 'Rejected'}
         messages.success(request, f"{freelancer.first_name} has been {label_map.get(status, status)}.")
@@ -713,3 +717,24 @@ def recruiter_analytics(request):
         "recent_interests": recent_interests,
         "closed_jobs":      closed_jobs,
     })
+
+try:
+    send_mail(
+        subject,
+        message,
+        from_email,
+        [recipient],
+        fail_silently=True,  # ← Make sure this is True
+    )
+except Exception:
+    pass  # Don't crash if email fails
+
+def send_email_async(email_obj):
+    def send():
+        try:
+            email_obj.send(fail_silently=True)
+        except Exception:
+            pass
+    thread = threading.Thread(target=send)
+    thread.daemon = True
+    thread.start()
