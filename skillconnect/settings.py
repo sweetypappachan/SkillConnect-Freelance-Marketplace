@@ -1,21 +1,14 @@
 import os
-"""
-Django settings for skillconnect project.
-"""
-
 from pathlib import Path
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-
-# SECURITY
 SECRET_KEY = 'django-insecure-_a2_w&req#y5qae_8-m+t@x%p$(=3%7-@&1$tm4+vnee_qv#ve'
 
 DEBUG = True
 
 ALLOWED_HOSTS = ['skillconnect-be2b.onrender.com', 'localhost', '127.0.0.1']
 
-# Application definition
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -23,13 +16,15 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-
     'accounts',
     'rest_framework',
+    'cloudinary',
+    'cloudinary_storage',
 ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -50,7 +45,6 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
-
                 'accounts.context_processors.navbar_notifications',
             ],
         },
@@ -58,7 +52,7 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'skillconnect.wsgi.application'
-# Database
+
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
@@ -66,57 +60,40 @@ DATABASES = {
     }
 }
 
-
-# Password validation
 AUTH_PASSWORD_VALIDATORS = [
-    {
-        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
-    },
+    {'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator'},
+    {'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator'},
+    {'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator'},
+    {'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator'},
 ]
 
-
-# Internationalization
 LANGUAGE_CODE = 'en-us'
-
 TIME_ZONE = 'Asia/Kolkata'
-
 USE_I18N = True
-
 USE_TZ = True
 
-
 # Static files
-STATIC_URL = 'static/'
+STATIC_URL = '/static/'
+STATIC_ROOT = BASE_DIR / 'staticfiles'
+STATICFILES_DIRS = [BASE_DIR / "static"]
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
-STATICFILES_DIRS = [
-    BASE_DIR / "static",
-]
-
+# Cloudinary for media/images
+CLOUDINARY_STORAGE = {
+    'CLOUD_NAME': 'dnls9ncld',  # ← Replace this
+    'API_KEY': '334239876168514',        # ← Replace this
+    'API_SECRET': 'WUQ9_782GEWaEZ_CghjbOhBXpok',  # ← Replace this
+}
+DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
 MEDIA_URL = '/media/'
-MEDIA_ROOT = BASE_DIR / 'media'
-
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-# ===============================
-# EMAIL CONFIGURATION (SMTP Gmail)
-# ===============================
-
+# Email
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
-
-EMAIL_HOST_USER = 'spa22382@gmail.com'
-EMAIL_HOST_PASSWORD = 'cfagqsxjgswqkpdz'
-
-DEFAULT_FROM_EMAIL = 'SkillConnect <spa22382@gmail.com>'
+EMAIL_HOST_USER = 'sweetypappachan@gmail.com'
+EMAIL_HOST_PASSWORD = 'yxhcixkwexkvdeso'
+DEFAULT_FROM_EMAIL = 'SkillConnect <sweetypappachan@gmail.com>'
